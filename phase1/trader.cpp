@@ -112,11 +112,6 @@ int main() {
         //     std::cout<<out[i];
         // }
         std::cout<<out;
-        // git
-        // git 2 test
-        // git 3 test
-        // git 4 testing
-        // git 5 final
 
     }
 
