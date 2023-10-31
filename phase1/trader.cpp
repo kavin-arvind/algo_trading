@@ -27,11 +27,14 @@ int main() {
 
     Receiver rcv;
     // sleep(5);
-    std::string message = rcv.readIML();    
+    std::string message;    
 
     std::map <std::string, int> stocks; // {stock_name, value}
     
     while(true){
+        message = rcv.readIML();
+        if(message.size() ==0 || message[0] == '\0'){continue;}
+        tokenizer("reset",'#');
         // inside for each message
         while (true){
 
@@ -119,9 +122,7 @@ int main() {
         // std::cout<< message << std::endl;
 
         // ____________ for every message
-        if(message[message.size()-1] == '$'){rcv.terminate(); break;}
-        message = rcv.readIML(); // reads for new message
-        tokenizer("reset",'#');
+        if(message[message.size()-1] == '$'){ break;}
     }
 
 // _________________________________________________________
