@@ -44,7 +44,7 @@ int main(int argc, char **argv) {
 
     while(std::getline(inputFile, message)) {
         // Send the message to the receiver
-        sleep(1);
+        // sleep(1);
         bytesSent = send(clientSocket, message.c_str(), message.length(), 0);
         if (bytesSent == -1) {
             std::cerr << "Error sending data to receiver." << std::endl;
