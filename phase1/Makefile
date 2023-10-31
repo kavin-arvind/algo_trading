@@ -16,6 +16,11 @@ runpart1: iml trader
 	./iml inputs/data1.txt
 	diff outputs/out1.txt output.txt
 
+runpart1_own: iml trader
+	./trader 1 > output.txt &
+	sleep 1
+	./iml input.txt
+
 runpart2: iml trader
 	./trader 2 > output.txt &
 	sleep 1
