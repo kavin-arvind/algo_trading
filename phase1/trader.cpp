@@ -14,18 +14,32 @@ std::string tokenizer(std::string txt, char l){ // delimiter = l
     if(txt == "reset"){k=0; return "";}
     std::string temp;
     while (true){
-        if (txt[k]=='\0') {
-            break;
-        }
-        if (txt[k]==l) {
-            break;
-        }
+        if (txt[k]=='\0') {break;}
+        if (txt[k]==l) {break;}
+        if(txt[k] == '\n'){k++;continue;} // if its \n, then basically ignore it and increment k.
         temp += txt[k];
         k++;
     }
     k++;
-    if(txt[k]=='\0'){return "";}
+    // if(txt[k]=='\0'){return "";}
+    // k++;
+    return temp;
+}
+
+std::string tokenizer_in_msg(std::string txt, char l){ // delimiter = l
+    static int k=0;
+    if(txt == "reset"){k=0; return "";}
+    std::string temp;
+    while (true){
+        if (txt[k]=='\0') {break;}
+        if (txt[k]==l) {break;}
+        if(txt[k] == '\n'){k++;continue;} // if its \n, then basically ignore it and increment k.
+        temp += txt[k];
+        k++;
+    }
     k++;
+    // if(txt[k]=='\0'){return "";}
+    // k++;
     return temp;
 }
 
@@ -40,6 +54,7 @@ int main() {
         message = rcv.readIML();
         if(message.size() ==0 || message[0] == '\0'){continue;}
         tokenizer("reset",'#');
+
         // inside for each message
         while (true){
 
@@ -48,31 +63,19 @@ int main() {
             // stock_name represents the string containing stock name
             // price give the price in string which needed to be converted to int
             // mode gives s if its sell and b if its buy
-
             std::string line = tokenizer(message, '#');
 
             if (line.empty()){break;}
 
-            int i=0;
-            std::string stock_name;
-            while(true){
-                if(line[i]=='\0'){break;}
-                if(line[i]==' '){break;}
-                stock_name += line[i];
-                i++;
-            }
-            i++;
+            std::string stock_name = tokenizer_in_msg(line, ' '); if(stock_name.size()==0){break;}
 
-            std::string price_str;
-            while(true){
-                if(line[i]=='\0'){break;}
-                if(line[i]==' '){break;}
-                price_str += line[i];
-                i++;
-            }
-            i++;
-            
-            char mode = line[i];
+            std::string price_str = tokenizer_in_msg(line, ' '); if(price_str.size()==0){break;}
+
+            char mode;
+            std::string mode_str = tokenizer_in_msg(line, '#');
+            if(mode_str == "s"){mode = 's';}
+            else if(mode_str == "b"){mode = 'b';}
+            else{break;}
 
             int price;
             try{
@@ -98,7 +101,6 @@ int main() {
                 }
 
             }
-
             else{ // if stock ALREADY encountered
                 if(mode == 's'){
                     if (b_qoute.find(stock_name) != b_qoute.end()){ // cancelling due to same price b and s
@@ -138,21 +140,16 @@ int main() {
                         }                
                     }
                 }
-                else{
-                    out+="invalid request";
-                }
             }
 
             // ________________________________________
-
+            tokenizer_in_msg("reset", ' ');
             // out+=  "\r\n";
             // for(int i=0;i<out.size();i++){
             //     if(out[i]=='\0'){continue;}
             //     std::cout<<out[i];
             // }
-            std::cerr<< "printing something"<<std::endl;
-            std::cout<<out<<std::endl;
-
+            std::cerr<<out<<std::endl;
         }
         // std::cout<< message << std::endl;
 
