@@ -2,7 +2,7 @@
 
 #include <map>
 std::string notrade = "No trade";
-
+char newline = '\n';
 std::map <std::string, int> b_qoute; // {stock_name, value} best quote which is not cancelled
 std::map <std::string, int> s_qoute; // {stock_name, value} """
 
@@ -14,9 +14,9 @@ std::string tokenizer(std::string txt, char l){ // delimiter = l
     if(txt == "reset"){k=0; return "";}
     std::string temp;
     while (true){
-        if (txt[k]=='\0') {break;}
+        if (txt[k]=='\0' || txt[k] == '$') {break;}
         if (txt[k]==l) {break;}
-        if(txt[k] == '\n'){k++;continue;} // if its \n, then basically ignore it and increment k.
+        if(txt[k] == newline){k++;continue;} // if its \n, then basically ignore it and increment k.
         temp += txt[k];
         k++;
     }
@@ -31,9 +31,9 @@ std::string tokenizer_in_msg(std::string txt, char l){ // delimiter = l
     if(txt == "reset"){k=0; return "";}
     std::string temp;
     while (true){
-        if (txt[k]=='\0') {break;}
+        if (txt[k]=='\0' || txt[k] == '$') {break;}
         if (txt[k]==l) {break;}
-        if(txt[k] == '\n'){k++;continue;} // if its \n, then basically ignore it and increment k.
+        if(txt[k] == newline){k++;continue;} // if its \n, then basically ignore it and increment k.
         temp += txt[k];
         k++;
     }
@@ -54,7 +54,7 @@ int main() {
         message = rcv.readIML();
         if(message.size() ==0 || message[0] == '\0'){continue;}
         tokenizer("reset",'#');
-
+// usleep(100000);
         // inside for each message
         while (true){
 
@@ -63,9 +63,11 @@ int main() {
             // stock_name represents the string containing stock name
             // price give the price in string which needed to be converted to int
             // mode gives s if its sell and b if its buy
+            
             std::string line = tokenizer(message, '#');
 
             if (line.empty()){break;}
+            tokenizer_in_msg("reset", ' ');
 
             std::string stock_name = tokenizer_in_msg(line, ' '); if(stock_name.size()==0){break;}
 
@@ -143,13 +145,12 @@ int main() {
             }
 
             // ________________________________________
-            tokenizer_in_msg("reset", ' ');
-            // out+=  "\r\n";
+            out+=  "\n";
             // for(int i=0;i<out.size();i++){
             //     if(out[i]=='\0'){continue;}
             //     std::cout<<out[i];
             // }
-            std::cerr<<out<<std::endl;
+            std::cout<<out;
         }
         // std::cout<< message << std::endl;
 
