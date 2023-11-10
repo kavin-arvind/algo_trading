@@ -8,6 +8,9 @@ std::map <std::string, int> s_qoute; // {stock_name, value} """
 
 std::map <std::string, int> stocks; // {stock_name, predicted value} 
 
+std::map <std::string, int> b_best; // {stock_name, predicted value} stores best price of a stock bought ever
+std::map <std::string, int> s_best; // {stock_name, predicted value} stores best price of a stock bought ever
+
 
 std::string tokenizer(std::string txt, char l){ // delimiter = l
     static int k=0;
@@ -160,6 +163,6 @@ int main() {
 
 // _________________________________________________________
     // std::cout<< out;
-    // rcv.terminate();
+    rcv.terminate();
     return 0;
 }
