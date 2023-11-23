@@ -36,3 +36,6 @@ runpart3: iml trader
 clean:
 	rm -rf output.txt trader iml
 	rm -rf *~
+test_map:
+	g++ -g test_map.cpp -o testing
+	./testing

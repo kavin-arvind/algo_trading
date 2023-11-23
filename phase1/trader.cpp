@@ -1,15 +1,17 @@
 #include "receiver.h"
 
-#include <map>
+// #include <map>
+#include "map.h"
+
 std::string notrade = "No trade";
 char newline = '\n';
-std::map <std::string, int> b_qoute; // {stock_name, value} best quote which is not cancelled
-std::map <std::string, int> s_qoute; // {stock_name, value} """
+AVLMap b_qoute; // {stock_name, value} best quote which is not cancelled
+AVLMap s_qoute; // {stock_name, value} """
 
-std::map <std::string, int> stocks; // {stock_name, predicted value} 
+// AVLMap stocks; // {stock_name, predicted value} 
 
-std::map <std::string, int> b_best; // {stock_name, predicted value} stores best price of a stock bought ever
-std::map <std::string, int> s_best; // {stock_name, predicted value} stores best price of a stock bought ever
+AVLMap b_best; // {stock_name, predicted value} stores best price of a stock bought ever
+AVLMap s_best; // {stock_name, predicted value} stores best price of a stock bought ever
 
 
 std::string tokenizer(std::string txt, char l){ // delimiter = l
@@ -93,59 +95,92 @@ int main() {
 
             // actual working 
 
-            if(stocks.find(stock_name)==stocks.end()){ // if stock encountered for the first time
-                stocks[stock_name] = price;
-                if(mode == 's'){
-                    out = out + stock_name +" "+ price_str + " " + "b";
-                }
-                else if(mode=='b'){
-                    out = out + stock_name +" "+ price_str + " " + "s";
+            if(mode == 's'){
+                if (b_qoute.containsKey(stock_name) && b_qoute.getValue(stock_name) == price){ // cancelling due to same price b and s
+                    b_qoute.remove(stock_name);
+                    out += notrade;
                 }
                 else{
-                    out+="invalid request";
-                }
-
-            }
-            else{ // if stock ALREADY encountered
-                if(mode == 's'){
-                    if (b_qoute.find(stock_name) != b_qoute.end() && b_qoute[stock_name] == price){ // cancelling due to same price b and s
-                        b_qoute.erase(stock_name);
-                        out += notrade;
-                    }
-                    else{
-                        if(price < stocks[stock_name]){ // quote accepted
+                    if(s_best.containsKey(stock_name)){ // already sold
+                        if(price < s_best.getValue(stock_name)){ // quote accepted
+                            s_best.update(stock_name, price);
                             out = out + stock_name +" "+ price_str + " " + "b";
-                            stocks[stock_name] = price;
                         }
                         else{ // quote not accepted
-                            if (s_qoute.find(stock_name) != s_qoute.end()){
-                                if (s_qoute[stock_name] > price ) {s_qoute[stock_name] = price;}
+                            if(s_qoute.containsKey(stock_name)){
+                                if (price < s_qoute.getValue(stock_name) ) {s_qoute.update(stock_name,price);}
                             }
-                            else {s_qoute[stock_name] = price;}
-                            out += notrade;
-                        }                
+                            else{
+                                s_qoute.insert(stock_name,price);
+                            }
+                            out = out + notrade;
+                        }
                     }
-                }
-                else if(mode == 'b'){
-                    if (s_qoute.find(stock_name) != s_qoute.end() && s_qoute[stock_name] == price){ // cancelling due to same price b and s
-                        s_qoute.erase(stock_name);
-                        out += notrade;
-                    }
-                    else{
-                        if(price > stocks[stock_name]){ // quote accepted
-                            out = out + stock_name +" "+ price_str + " " + "s";
-                            stocks[stock_name] = price;
+                    else if(b_best.containsKey(stock_name)){
+                        if(price < b_best.getValue(stock_name)){ // quote accepted
+                            s_best.insert(stock_name, price);
+                            out = out + stock_name +" "+ price_str + " " + "b";
                         }
                         else{ // quote not accepted
-                            if (b_qoute.find(stock_name) != b_qoute.end()){
-                                if (b_qoute[stock_name] < price ) {b_qoute[stock_name] = price;}
+                            if(s_qoute.containsKey(stock_name)){
+                                if (price < s_qoute.getValue(stock_name)) {s_qoute.update(stock_name,price);}
                             }
-                            else {b_qoute[stock_name] = price;}
-                            out += notrade;
-                        }                
+                            else{
+                                s_qoute.insert(stock_name,price);
+                            }
+                            out = out + notrade;
+                        }
+                    }
+                    else{ // first time stock encountered
+                        s_best.insert(stock_name, price);
+                        out = out + stock_name +" "+ price_str + " " + "b";
                     }
                 }
             }
+
+            else if(mode == 'b'){
+                if (s_qoute.containsKey(stock_name) && s_qoute.getValue(stock_name) == price){ // cancelling due to same price b and s
+                    s_qoute.remove(stock_name);
+                    out += notrade;
+                }
+                else{
+                    if(b_best.containsKey(stock_name)){ // already sold
+                        if(price > b_best.getValue(stock_name)){ // quote accepted
+                            b_best.update(stock_name, price);
+                            out = out + stock_name +" "+ price_str + " " + "s";
+                        }
+                        else{ // quote not accepted
+                            if(b_qoute.containsKey(stock_name)){
+                                if ( price > b_qoute.getValue(stock_name)) {b_qoute.update(stock_name,price);}
+                            }
+                            else{
+                                b_qoute.insert(stock_name,price);
+                            }
+                            out = out + notrade;
+                        }
+                    }
+                    else if(s_best.containsKey(stock_name)){
+                        if(price > s_best.getValue(stock_name)){ // quote accepted
+                            b_best.insert(stock_name, price);
+                            out = out + stock_name +" "+ price_str + " " + "s";
+                        }
+                        else{ // quote not accepted
+                            if(b_qoute.containsKey(stock_name)){
+                                if (price > b_qoute.getValue(stock_name) ) {b_qoute.update(stock_name,price);}
+                            }
+                            else{
+                                b_qoute.insert(stock_name,price);
+                            }
+                            out = out + notrade;
+                        }
+                    }
+                    else{ // first time stock encountered
+                        b_best.insert(stock_name, price);
+                        out = out + stock_name +" "+ price_str + " " + "s";
+                    }
+                }
+            }
+
 
             // ________________________________________
             out+=  "\n";

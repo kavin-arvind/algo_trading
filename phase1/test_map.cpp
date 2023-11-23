@@ -12,7 +12,9 @@ int main(){
     std::cout<<x.containsKey("a")<<std::endl;
     std::cout<<x.containsKey("b")<<std::endl;
     std::cout<<x.containsKey("c")<<std::endl;
+    std::cout<<y.getValue("c")<<std::endl;
 
+    y.update("c", 10);
     std::cout<<y.getValue("c")<<std::endl;
     
 }

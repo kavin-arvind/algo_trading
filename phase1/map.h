@@ -26,6 +26,7 @@ private:
     Node* remove(Node* root, const std::string& key);
     void clearRecursive(Node* node);
     int getSizeRecursive(Node* node) const;
+    Node* update(Node* node, const std::string& key, int value);
 
 public:
     AVLMap();
@@ -38,6 +39,7 @@ public:
     int getSize() const;
     bool isEmpty() const;
     void clear();
+    void update(const std::string& key, int value);
 };
 
 AVLMap::AVLMap() : root(nullptr) {}
@@ -260,6 +262,62 @@ bool AVLMap::isEmpty() const {
 void AVLMap::clear() {
     clearRecursive(root);
     root = nullptr;
+}
+
+AVLMap::Node* AVLMap::update(Node* node, const std::string& key, int value) {
+    // If the node is null, the key is not present, so we insert the key-value pair
+    if (node == nullptr) {
+        return insert(node, key, value);
+    }
+
+    // If the key is less than the current node's key, go left
+    if (key < node->key) {
+        node->left = update(node->left, key, value);
+    }
+    // If the key is greater than the current node's key, go right
+    else if (key > node->key) {
+        node->right = update(node->right, key, value);
+    }
+    // If the key is equal to the current node's key, update the value
+    else {
+        node->value = value;
+        return node;
+    }
+
+    // Update height of the current node
+    node->height = 1 + std::max(getHeight(node->left), getHeight(node->right));
+
+    // Get the balance factor to check if rotation is needed
+    int balance = getBalanceFactor(node);
+
+    // Left Left Case
+    if (balance > 1 && key < node->left->key) {
+        return rightRotate(node);
+    }
+
+    // Right Right Case
+    if (balance < -1 && key > node->right->key) {
+        return leftRotate(node);
+    }
+
+    // Left Right Case
+    if (balance > 1 && key > node->left->key) {
+        node->left = leftRotate(node->left);
+        return rightRotate(node);
+    }
+
+    // Right Left Case
+    if (balance < -1 && key < node->right->key) {
+        node->right = rightRotate(node->right);
+        return leftRotate(node);
+    }
+
+    // No rotation needed
+    return node;
+}
+
+void AVLMap::update(const std::string& key, int value) {
+    root = update(root, key, value);
 }
 
 #endif // MAP_AVL_H
