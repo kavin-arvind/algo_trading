@@ -19,12 +19,12 @@ $(IML): ../iml.cpp
 
 # Rule to generate an output file for each input file
 output%.txt: input%.txt $(IML) $(TRADER)
-	cat $< > ../inputs/data1.txt
-	$(CXX) $(CXXFLAGS) $(IML).cpp -o $(IML)
+	cat $< > ../inputs/data1.txt &
+	$(CXX) $(CXXFLAGS) $(IML).cpp -o $(IML) &
 	$(TRADER) 1 > ../output.txt &
-	$(SLEEP)
-	$(IML) ../inputs/data1.txt
-	$(SLEEP)
+	$(SLEEP) &
+	$(IML) ../inputs/data1.txt &
+	$(SLEEP) &
 	$(DIFF) ../output.txt $@
 
 # Clean up temporary files

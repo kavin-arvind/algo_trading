@@ -5,6 +5,7 @@
 
 std::string notrade = "No trade";
 char newline = '\n';
+std::string str_newline = "\n";
 AVLMap b_qoute; // {stock_name, value} best quote which is not cancelled
 AVLMap s_qoute; // {stock_name, value} """
 
@@ -16,7 +17,7 @@ AVLMap s_best; // {stock_name, predicted value} stores best price of a stock bou
 
 std::string tokenizer(std::string txt, char l){ // delimiter = l
     static int k=0;
-    if(txt == "reset"){k=0; return "";}
+    if(txt == "__reset__"){k=0; return "";}
     std::string temp;
     while (true){
         if (txt[k]=='\0' || txt[k] == '$') {break;}
@@ -33,7 +34,7 @@ std::string tokenizer(std::string txt, char l){ // delimiter = l
 
 std::string tokenizer_in_msg(std::string txt, char l){ // delimiter = l
     static int k=0;
-    if(txt == "reset"){k=0; return "";}
+    if(txt == "__reset__"){k=0; return "";}
     std::string temp;
     while (true){
         if (txt[k]=='\0' || txt[k] == '$') {break;}
@@ -58,12 +59,12 @@ int main() {
     while(true){
         message = rcv.readIML();
         if(message.size() ==0 || message[0] == '\0'){continue;}
-        tokenizer("reset",'#');
+        tokenizer("__reset__",'#');
 // usleep(100000);
         // inside for each message
         while (true){
 
-            std::string out;
+            std::string out="";
 
             // stock_name represents the string containing stock name
             // price give the price in string which needed to be converted to int
@@ -72,7 +73,7 @@ int main() {
             std::string line = tokenizer(message, '#');
 
             if (line.empty()){break;}
-            tokenizer_in_msg("reset", ' ');
+            tokenizer_in_msg("__reset__", ' ');
 
             std::string stock_name = tokenizer_in_msg(line, ' '); if(stock_name.size()==0){break;}
 
@@ -183,12 +184,12 @@ int main() {
 
 
             // ________________________________________
-            out+=  "\n";
+            // out+=  "\n";
             // for(int i=0;i<out.size();i++){
             //     if(out[i]=='\0'){continue;}
             //     std::cout<<out[i];
             // }
-            std::cout<<out;
+            std::cout<<out<<std::endl;
         }
         // std::cout<< message << std::endl;
 
