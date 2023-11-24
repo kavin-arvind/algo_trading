@@ -49,7 +49,7 @@ class Receiver
             close(serverSocket);
         }
 
-        std::cout << "Receiver is listening on port " << PORT << std::endl;
+        std::cout << "Receiver is listening on port " << PORT << "\r\n";
 
         clientAddrLength = sizeof(clientAddress);
         clientSocket = accept(serverSocket, (struct sockaddr*)&clientAddress, &clientAddrLength);
