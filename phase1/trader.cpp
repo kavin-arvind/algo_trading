@@ -305,6 +305,8 @@ int main() {
             }
             if(flag1==false){input_lines.addVector(append_vector, price, line, mode);}
 
+            // std::cout<<"summa";
+            // algo
             LinkedList zeroindices;
             std::vector<int> sumvec(vector_size,0);
             std::vector<int> arrind;
@@ -314,6 +316,17 @@ int main() {
             //std::cout<<input_lines.getSize()<<"\n";
             g(zeroindices,input_lines);
             //std::cout<<"after";
+
+            // //TEMPORARY: checking if f works
+            // std::cout<<zeroindices.getSize();
+            // for (int i=0;i < zeroindices.getSize(); ++i){
+            //     for (const auto& word : zeroindices.getNodeByIndex(i)->data) {
+            //         std::cout << "\"" << word << "\"";
+            //     }
+            //     std::cout<<std::endl;
+            // }
+            
+            
 
             // ________________________________________
             // out+=  "\n";
