@@ -8,7 +8,7 @@ CXXFLAGS = -std=c++20
 TRADER = ../trader
 IML = ../iml
 SLEEP = sleep 1
-DIFF = diff --strip-trailing-cr
+DIFF = diff -Bw
 
 # Define the rules
 all: $(OUTPUTS)
@@ -23,11 +23,11 @@ trader: $(TRADER)
 
 # Rule to generate an output file for each input file
 output%.txt: input%.txt iml trader
-	cat $< > ../inputs/data1.txt &
 	$(TRADER) 1 > ../output.txt &
-	$(SLEEP) &
-	$(IML) ../inputs/data1.txt &
-	$(SLEEP) &
+	$(SLEEP) 
+	$(IML) $< 
+	$(SLEEP) 
+
 	$(DIFF) ../output.txt $@
 
 # Clean up temporary files

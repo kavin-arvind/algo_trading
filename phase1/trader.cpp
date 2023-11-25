@@ -3,7 +3,7 @@
 #include "linked_list.h"
 // trader 1 ka code
 
-std::string notrade = "No trade";
+std::string notrade = "No Trade";
 char newline = '\n';
 std::string str_newline = "\n";
 AVLMap b_qoute; // {stock_name, value} best quote which is not cancelled
@@ -225,6 +225,9 @@ int main(int argc, char **argv){
                                 if(price < s_best.getValue(stock_name)){ // quote accepted
                                     s_best.update(stock_name, price);
                                     out = out + stock_name +" "+ price_str + " " + "b";
+                                    if(s_qoute.containsKey(stock_name)){
+                                        if (price < s_qoute.getValue(stock_name) ) {s_qoute.update(stock_name,price);}
+                                    }
                                 }
                                 else{ // quote not accepted
                                     if(s_qoute.containsKey(stock_name)){
@@ -240,6 +243,9 @@ int main(int argc, char **argv){
                                 if(price < b_best.getValue(stock_name)){ // quote accepted
                                     s_best.insert(stock_name, price);
                                     out = out + stock_name +" "+ price_str + " " + "b";
+                                    if(s_qoute.containsKey(stock_name)){
+                                        if (price < s_qoute.getValue(stock_name)) {s_qoute.update(stock_name,price);}
+                                    }
                                 }
                                 else{ // quote not accepted
                                     if(s_qoute.containsKey(stock_name)){
@@ -268,6 +274,9 @@ int main(int argc, char **argv){
                                 if(price > b_best.getValue(stock_name)){ // quote accepted
                                     b_best.update(stock_name, price);
                                     out = out + stock_name +" "+ price_str + " " + "s";
+                                    if(b_qoute.containsKey(stock_name)){
+                                        if ( price > b_qoute.getValue(stock_name)) {b_qoute.update(stock_name,price);}
+                                    }
                                 }
                                 else{ // quote not accepted
                                     if(b_qoute.containsKey(stock_name)){
@@ -283,6 +292,9 @@ int main(int argc, char **argv){
                                 if(price > s_best.getValue(stock_name)){ // quote accepted
                                     b_best.insert(stock_name, price);
                                     out = out + stock_name +" "+ price_str + " " + "s";
+                                    if(b_qoute.containsKey(stock_name)){
+                                        if (price > b_qoute.getValue(stock_name) ) {b_qoute.update(stock_name,price);}
+                                    }
                                 }
                                 else{ // quote not accepted
                                     if(b_qoute.containsKey(stock_name)){
