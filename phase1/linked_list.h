@@ -75,35 +75,41 @@ public:
     }
 
     // Function to delete a vector from the linked list based on its index
-    void deleteVectorByIndex(int index) {
-        if (index < 0) {
-            std::cerr << "Invalid index" << std::endl;
-            return;
-        }
-
-        Node* current = head;
-        Node* prev = nullptr;
-        int currentIndex = 0;
-
-        while (current && currentIndex != index) {
-            prev = current;
-            current = current->next;
-            currentIndex++;
-        }
-
-        if (current) {
-            if (prev) {
-                prev->next = current->next;
-            } else {
-                head = current->next;
-            }
-
-            delete current;
-            size--;  // Decrement the size when a node is deleted
-        } else {
-            std::cerr << "Index out of bounds" << std::endl;
-        }
+void deleteVectorByIndex(int index) {
+    if (index < 0) {
+        std::cerr << "Invalid index" << std::endl;
+        return;
     }
+
+    Node* current = head;
+    Node* prev = nullptr;
+    int currentIndex = 0;
+
+    while (current && currentIndex != index) {
+        prev = current;
+        current = current->next;
+        currentIndex++;
+    }
+
+    if (current) {
+        if (prev) {
+            prev->next = current->next;
+        } else {
+            // If the first node is being deleted, update head
+            head = current->next;
+        }
+
+        // If the last node is being deleted, update tail
+        if (current == tail) {
+            tail = prev;
+        }
+
+        delete current;
+        size--;  // Decrement the size when a node is deleted
+    } else {
+        std::cerr << "Index out of bounds" << std::endl;
+    }
+}
 
     // Function to access a vector in the linked list based on its index
     Node* getNodeByIndex(int index) const {

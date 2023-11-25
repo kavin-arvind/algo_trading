@@ -5,7 +5,7 @@ OUTPUTS = output1.txt output2.txt output3.txt output4.txt output5.txt output6.tx
 # Define the common compile and run commands
 CXX = g++
 CXXFLAGS = -std=c++20
-TRADER = ../trader
+TRADER = ../trader1_1
 IML = ../iml
 SLEEP = sleep 1
 DIFF = diff -bw

@@ -3,11 +3,12 @@
 // #include <map>
 #include "map.h"
 #include "linked_list.h"
-#define vector_size 100
+#define vector_size 5
 std::string notrade = "No trade";
 std::vector<int> zerovec(vector_size, 0);
 char newline = '\n';
 std::string str_newline = "\n";
+int g_profit = 0;
 //AVLMap b_qoute; // {stock_name, value} best quote which is not cancelled
 //AVLMap s_qoute; // {stock_name, value} """
 
@@ -159,8 +160,7 @@ void g(LinkedList &zeroindeces, LinkedList &input_lines){
     for(int i = 0; i < zeroindeces.getNodeByIndex(maxindex_zeroindeces)->data.size(); ++i){ // coming in ascending order
         input_lines.deleteVectorByIndex(zeroindeces.getNodeByIndex(maxindex_zeroindeces)->data[i]);
     }
-    std::cout<<maxprofit<<"\r"<<std::endl;
-    
+    g_profit += maxprofit;    
 }
 
 int main() {
@@ -286,7 +286,7 @@ int main() {
             }
 
             //CANCELLATION LAWS
-            bool flag1=false;
+            bool flag1=false; // tells if cancellation happens or not.
             for(int i=0;i < input_lines.getSize(); ++i){
                 if(compareVectors(input_lines.getNodeByIndex(i)->data, append_vector)){
                     if(mode != input_lines.getNodeByIndex(i)->mode){
@@ -296,14 +296,20 @@ int main() {
                     }
                     else{
                         if(input_lines.getNodeByIndex(i)->price < price){
-                            input_lines.getNodeByIndex(i)->price = price;
+                            Node* temp = input_lines.getNodeByIndex(i);
+                            temp->price = price;
+                            temp->inpline = line;
+                            temp->mode = mode;
                             flag1=true;
                             break;
                         }
                     }
                 }
             }
-            if(flag1==false){input_lines.addVector(append_vector, price, line, mode);}
+            if(flag1==false){
+                input_lines.addVector(append_vector, price, line, mode);
+            }
+            else{std::cout<<notrade<<"\r"<<std::endl;continue;}
 
             // std::cout<<"summa";
             // algo
@@ -316,7 +322,7 @@ int main() {
             //std::cout<<input_lines.getSize()<<"\n";
             g(zeroindices,input_lines);
             //std::cout<<"after";
-
+            // std::cerr<<input_lines.getSize();
             // //TEMPORARY: checking if f works
             // std::cout<<zeroindices.getSize();
             // for (int i=0;i < zeroindices.getSize(); ++i){
@@ -347,6 +353,7 @@ int main() {
 
 // _________________________________________________________
     // std::cout<< out;
+    std::cout<<g_profit<<"\r"<<std::endl;
     rcv.terminate();
     return 0;
 }
