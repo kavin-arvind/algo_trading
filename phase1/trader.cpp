@@ -65,26 +65,70 @@ int main() {
         while (true){
 
             std::string out="";
-
-            // stock_name represents the string containing stock name
-            // price give the price in string which needed to be converted to int
-            // mode gives s if its sell and b if its buy
             
             std::string line = tokenizer(message, '#');
 
             if (line.empty()){break;}
             tokenizer_in_msg("__reset__", ' ');
 
-            std::string stock_name = tokenizer_in_msg(line, ' '); if(stock_name.size()==0){break;}
+            // process input (one linear combo)
 
-            std::string price_str = tokenizer_in_msg(line, ' '); if(price_str.size()==0){break;}
+            int ite=0;
+            std::vector<std::string> linelst;
+            std::string lineobj = "";
+            //remove leading whitespaces
+            while(true){
+                if(line[ite] == ' '){
+                    ite++;
+                }
+                else{break;}
+            }
 
+            while(true){
+                if (line[ite] == '\0'){
+                    if (lineobj != ""){
+                        linelst.push_back(lineobj); // push the str obj
+                        lineobj = "";
+                    }
+                    break;
+                } // to reach end of line
+
+                if (line[ite] == ' '){
+                    linelst.push_back(lineobj); // push the str obj
+                    lineobj = "";
+                    while(true){ // remove further whitespaces
+                        if(line[ite] == ' '){
+                            ite++;
+                        }
+                        else{break;}
+                    }
+                }
+
+                lineobj += line[ite];
+                ite++; 
+
+            }
+
+            // removing extra strings at the last
+
+            std::string lastele = linelst.back();
+            if (not (lastele=="b" || lastele=="s")){
+                linelst.pop_back();
+            }
+
+            // processing line ends here
+
+            if (linelst.size() < 2){break;}
+
+            // mode is last element
             char mode;
-            std::string mode_str = tokenizer_in_msg(line, '#');
+            std::string mode_str = linelst.back();
             if(mode_str == "s"){mode = 's';}
             else if(mode_str == "b"){mode = 'b';}
             else{break;}
 
+            // price is 2nd last element
+            std::string price_str = linelst[linelst.size() - 2];
             int price;
             try{
                 price = stoi(price_str);
