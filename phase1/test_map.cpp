@@ -1,20 +1,47 @@
-#include<iostream>
-#include "map.h"
+#include "linked_list.h"
 
-int main(){
-    AVLMap x;
-    AVLMap y;
-    x.insert("a",1);
-    x.insert("b",2);
-    y.insert("c",3);
-    y.insert("d",4);
-    x.remove("a");
-    std::cout<<x.containsKey("a")<<std::endl;
-    std::cout<<x.containsKey("b")<<std::endl;
-    std::cout<<x.containsKey("c")<<std::endl;
-    std::cout<<y.getValue("c")<<std::endl;
+int main() {
+    // Create a LinkedList
+    LinkedList myList;
 
-    y.update("c", 10);
-    std::cout<<y.getValue("c")<<std::endl;
-    
+    // Add vectors with prices, inplines, and modes
+    myList.addVector({1, 2, 3}, 10, "abc", 'A');
+    myList.addVector({4, 5, 6}, 20, "xyz", 'B');
+    myList.addVector({7, 8, 9}, 30, "123", 'C');
+
+    // Print the initial list
+    std::cout << "Initial List:\n";
+    myList.printListInOrder();
+    std::cout << "Size: " << myList.getSize() << "\n\n";
+
+    // Delete a vector by content
+    myList.deleteVector({4, 5, 6});
+    std::cout << "List after deleting {4, 5, 6}:\n";
+    myList.printListInOrder();
+    std::cout << "Size: " << myList.getSize() << "\n\n";
+
+    // Delete a vector by index
+    myList.deleteVectorByIndex(1);
+    std::cout << "List after deleting index 1:\n";
+    myList.printListInOrder();
+    std::cout << "Size: " << myList.getSize() << "\n\n";
+
+    // Modify a vector by index
+    myList.modifyNodeByIndex(0, {10, 20, 30}, 50, "modified", 'M');
+    std::cout << "List after modifying index 0:\n";
+    myList.printListInOrder();
+    std::cout << "Size: " << myList.getSize() << "\n\n";
+
+    // Access a vector by index
+    Node* accessedNode = myList.getNodeByIndex(0);
+    if (accessedNode) {
+        std::cout << "Accessed Node at index 0:\n";
+        std::cout << "Data: ";
+        for (int element : accessedNode->data) {
+            std::cout << element << " ";
+        }
+        std::cout << "\nPrice: " << accessedNode->price << "\nInpline: " << accessedNode->inpline << "\nMode: " << accessedNode->mode << "\n\n";
+    }
+
+    return 0;
 }

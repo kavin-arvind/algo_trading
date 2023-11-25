@@ -39,3 +39,7 @@ clean:
 test_map:
 	g++ -g test_map.cpp -o testing
 	./testing
+runpart2_own: iml trader
+	./trader 2 > output.txt &
+	sleep 1
+	./iml inputs/data2.txt
