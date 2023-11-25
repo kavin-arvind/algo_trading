@@ -6,6 +6,8 @@ all: trader iml
 
 trader: trader.cpp receiver.h
 	g++ -std=c++20 trader.cpp -o trader
+trader1_1: trader1_1.cpp receiver.h
+	g++ -std=c++20 trader1_1.cpp -o trader1_1
 
 iml: iml.cpp
 	g++ -std=c++20 iml.cpp -o iml
@@ -26,6 +28,12 @@ runpart2: iml trader
 	sleep 1
 	./iml inputs/data2.txt
 	diff outputs/out2.txt output.txt
+
+runpart2_own: iml trader
+	./trader 2 &
+	sleep 1
+	./iml inputs/data2.txt
+
 
 runpart3: iml trader
 	./trader 3 > output.txt &

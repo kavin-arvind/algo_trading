@@ -4,8 +4,8 @@
 #include "map.h"
 
 std::string notrade = "No trade";
-char newline = '\r\n';
-std::string str_newline = "\r\n";
+char newline = '\n';
+std::string str_newline = "\n";
 AVLMap b_qoute; // {stock_name, value} best quote which is not cancelled
 AVLMap s_qoute; // {stock_name, value} """
 

@@ -5,12 +5,15 @@ int main() {
     LinkedList myList;
 
     // Add vectors with prices, inplines, and modes
-    myList.addVector({1, 2, 3}, 10, "abc", 'A');
+    std::vector<int> demo = {1,2,3};
+    myList.addVector(demo, 10, "abc", 'A');
     myList.addVector({4, 5, 6}, 20, "xyz", 'B');
     myList.addVector({7, 8, 9}, 30, "123", 'C');
 
     // Print the initial list
     std::cout << "Initial List:\n";
+    myList.printListInOrder();
+    demo[0] = 100; std::cout<<"after modification"<<demo[0]<<std::endl;
     myList.printListInOrder();
     std::cout << "Size: " << myList.getSize() << "\n\n";
 

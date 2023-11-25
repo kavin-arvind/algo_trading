@@ -5,6 +5,7 @@
 #include "linked_list.h"
 #define vector_size 100
 std::string notrade = "No trade";
+std::vector<int> zerovec(vector_size, 0);
 char newline = '\n';
 std::string str_newline = "\n";
 AVLMap b_qoute; // {stock_name, value} best quote which is not cancelled
@@ -63,28 +64,99 @@ bool compareVectors(const std::vector<int>& v1, const std::vector<int>& v2) {
     return std::equal(v1.begin(), v1.end(), v2.begin());
 }
 
-// LETS GO 
-//O(2^n)
-void fgfg(char* s, vector<char> &res, int n){ 
-        if (n == 0) { 
-            for (auto i: res)  
-              cout << i; 
-            cout << "\n"; 
-            return; 
-              
-        } 
-         res.push_back(s[n - 1]); 
-         f(s, res, n - 1); 
-         res.pop_back();                     
-         f(s, res, n - 1); 
-    } 
+std::vector<int> add2Vectors(const std::vector<int>& v1, const std::vector<int>& v2) {
+    // Check if the vectors have the same size
+    // if (v1.size() != v2.size()) {
+    //     throw std::invalid_argument("Vectors must have the same size");
+    // }
 
-//O(2^n)
+    // Create a new vector to store the result
+    std::vector<int> result;
 
-void f(LinkedList &LL, int n, int* arrind){
-    if ( n==0 ){
-        LL.getVectorByIndex(n-1)
+    // Iterate through the vectors and add corresponding elements
+    for (size_t i = 0; i < v1.size(); ++i) {
+        result.push_back(v1[i] + v2[i]);
     }
+
+    return result;
+}
+
+std::vector<int> sub2Vectors(const std::vector<int>& v1, const std::vector<int>& v2) {
+    // Check if the vectors have the same size
+    // if (v1.size() != v2.size()) {
+    //     throw std::invalid_argument("Vectors must have the same size");
+    // }
+
+    // Create a new vector to store the result
+    std::vector<int> result;
+
+    // Iterate through the vectors and add corresponding elements
+    for (size_t i = 0; i < v1.size(); ++i) {
+        result.push_back(v1[i] - v2[i]);
+    }
+
+    return result;
+}
+
+// LETS GO 
+
+//O(2^n)
+
+// LL - inputlines - main list of all arrays of input
+// n - gonna find powerset of that many elements from start
+// arrind - indices that have been considered for sum
+// sumvec - the sum of all arrays
+// zeroindices - list of all sums that give zero
+// pricesum
+
+void f(LinkedList &LL, int n, std::vector<int> &arrind, std::vector<int> &sumvec, LinkedList &zeroindices, int pricesum){
+    if ( n==0 ){
+        if(compareVectors(sumvec,zerovec)){
+            if(pricesum > 0){
+                zeroindices.addVector(arrind, pricesum, "a", 'n');
+            }
+        }
+        return;
+    }
+
+    arrind.push_back(n-1);
+    sumvec = add2Vectors(sumvec, LL.getNodeByIndex(n-1)->data);
+    pricesum += LL.getNodeByIndex(n-1)->price;
+    f(LL, n-1, arrind, sumvec, zeroindices, pricesum);
+    arrind.pop_back();
+    sumvec = sub2Vectors(sumvec, LL.getNodeByIndex(n-1)->data);
+    pricesum -= LL.getNodeByIndex(n-1)->price;
+    f(LL, n-1, arrind, sumvec, zeroindices, pricesum);
+    return;
+}
+
+// zero indeces will have invalid entries of price, mode and stuffs.
+void g(LinkedList &zeroindeces, LinkedList &input_lines){
+    // std::vector<int> profit[zeroindeces.getSize()];
+    if(zeroindeces.getSize()==0)return;
+    int maxindex_zeroindeces = -1;
+    int maxprofit = zeroindeces.getNodeByIndex(0)->price;
+    for(int i=0;i<zeroindeces.getSize();++i){
+        if(maxprofit < zeroindeces.getNodeByIndex(i)->price){
+            maxprofit = zeroindeces.getNodeByIndex(i)->price;
+            maxindex_zeroindeces = i;
+        }
+    }
+    // now maxprofit contains the max profit, and maxindex_zeroindeces contains the indeces..
+    // that is the trade we'll be doing, and we delete corresponding trades.
+    for(int i = zeroindeces.getNodeByIndex(maxindex_zeroindeces)->data.size()-1; i>=0; i = i-1){ // coming in decending order
+        std::string outputting = input_lines.getNodeByIndex(zeroindeces.getNodeByIndex(maxindex_zeroindeces)->data[i])->inpline;
+        std::cout<< outputting.substr(0,outputting.size()-1);
+        if(input_lines.getNodeByIndex(zeroindeces.getNodeByIndex(maxindex_zeroindeces)->data[i])->mode == 'b')std::cout<<'s'<<std::endl;
+        else if(input_lines.getNodeByIndex(zeroindeces.getNodeByIndex(maxindex_zeroindeces)->data[i])->mode == 's')std::cout<<'b'<<std::endl;
+
+        // input_lines.deleteVectorByIndex(zeroindeces.getNodeByIndex(maxindex_zeroindeces)->data[i]);
+    }
+    for(int i = 0; i < zeroindeces.getNodeByIndex(maxindex_zeroindeces)->data.size(); ++i){ // coming in decending order
+        input_lines.deleteVectorByIndex(zeroindeces.getNodeByIndex(maxindex_zeroindeces)->data[i]);
+    }
+    std::cout<<maxprofit<<std::endl;
+    
 }
 
 int main() {
@@ -182,10 +254,10 @@ int main() {
             linelst.pop_back(); // popping price
 
             // process through the input vector
-            std::vector<int> append_vector(vector_size);
-            for(int i=0;i<vector_size;++i){ //initialize to 0
-                append_vector[i]=0;
-            }
+            std::vector<int> append_vector(vector_size,0);
+            // for(int i=0;i<vector_size;++i){ //initialize to 0
+            //     append_vector[i]=0;
+            // }
             for (int i=0; i < linelst.size(); i=i+2){
                 if(mode=='b'){// no problem.. we just append to the list
                     if(stock_index.containsKey(linelst[i])){
@@ -229,6 +301,13 @@ int main() {
             }
             if(flag1==false){input_lines.addVector(append_vector, price, line, mode);}
 
+            LinkedList zeroindices;
+            std::vector<int> sumvec(vector_size,0);
+            std::vector<int> arrind;
+            int n = input_lines.getSize();
+            int pricesum = 0;
+            f(input_lines, n, arrind, sumvec, zeroindices, pricesum);
+            g(zeroindices,input_lines);
             
 
             // ________________________________________
@@ -237,7 +316,7 @@ int main() {
             //     if(out[i]=='\0'){continue;}
             //     std::cout<<out[i];
             // }
-            std::cout<<out<<"\r\n";
+            // std::cout<<out<<"\r\n";
         }
         //input_lines.printListInOrder();
         // std::cout<< message << std::endl;
