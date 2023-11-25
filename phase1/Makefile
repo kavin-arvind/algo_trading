@@ -29,10 +29,10 @@ runpart2: iml trader
 	./iml inputs/data2.txt
 	diff outputs/out2.txt output.txt
 
-runpart2_own: iml trader
-	./trader 2 &
+runpart2_own:
+	./trader 2 > part2_output.txt &
 	sleep 1
-	./iml inputs/data2.txt
+	./iml part2_testcases/input.txt
 
 
 runpart3: iml trader
@@ -47,7 +47,3 @@ clean:
 test_map:
 	g++ -g test_map.cpp -o testing
 	./testing
-runpart2_own: iml trader
-	./trader 2 > output.txt &
-	sleep 1
-	./iml inputs/data2.txt
