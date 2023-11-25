@@ -189,7 +189,7 @@ int main() {
             //     if(out[i]=='\0'){continue;}
             //     std::cout<<out[i];
             // }
-            std::cout<<out<<"\r\n";
+            std::cout<<out<<std::endl;
         }
         // std::cout<< message << std::endl;
 

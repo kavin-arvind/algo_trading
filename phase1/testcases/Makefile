@@ -5,22 +5,25 @@ OUTPUTS = output1.txt output2.txt output3.txt output4.txt output5.txt output6.tx
 # Define the common compile and run commands
 CXX = g++
 CXXFLAGS = -std=c++20
-TRADER = ../trader1_1
+TRADER = ../trader
 IML = ../iml
 SLEEP = sleep 1
-DIFF = diff -bw
+DIFF = diff --strip-trailing-cr
 
 # Define the rules
 all: $(OUTPUTS)
 
 # Rule to compile the C++ code
-$(IML): ../iml.cpp
-	$(CXX) $(CXXFLAGS) $< -o $@
+iml: $(IML)
+	$(CXX) $(CXXFLAGS) $(IML).cpp -o $(IML)
+
+trader: $(TRADER)
+	$(CXX) $(CXXFLAGS) $(TRADER).cpp -o $(TRADER)
+
 
 # Rule to generate an output file for each input file
-output%.txt: input%.txt $(IML) $(TRADER)
+output%.txt: input%.txt iml trader
 	cat $< > ../inputs/data1.txt &
-	$(CXX) $(CXXFLAGS) $(IML).cpp -o $(IML) &
 	$(TRADER) 1 > ../output.txt &
 	$(SLEEP) &
 	$(IML) ../inputs/data1.txt &

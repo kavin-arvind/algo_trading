@@ -1,24 +1,18 @@
 #include "receiver.h"
-
-// #include <map>
 #include "map.h"
 #include "linked_list.h"
-#define vector_size 5
+// trader 1 ka code
+
 std::string notrade = "No trade";
-std::vector<int> zerovec(vector_size, 0);
 char newline = '\n';
 std::string str_newline = "\n";
-int g_profit = 0;
-//AVLMap b_qoute; // {stock_name, value} best quote which is not cancelled
-//AVLMap s_qoute; // {stock_name, value} """
+AVLMap b_qoute; // {stock_name, value} best quote which is not cancelled
+AVLMap s_qoute; // {stock_name, value} """
 
-AVLMap stock_index; // from stock to index of it in the array
 // AVLMap stocks; // {stock_name, predicted value} 
-LinkedList input_lines; // llist of inputted lines
 
-
-//AVLMap b_best; // {stock_name, predicted value} stores best price of a stock bought ever
-//AVLMap s_best; // {stock_name, predicted value} stores best price of a stock bought ever
+AVLMap b_best; // {stock_name, predicted value} stores best price of a stock bought ever
+AVLMap s_best; // {stock_name, predicted value} stores best price of a stock bought ever
 
 
 std::string tokenizer(std::string txt, char l){ // delimiter = l
@@ -55,6 +49,13 @@ std::string tokenizer_in_msg(std::string txt, char l){ // delimiter = l
     return temp;
 }
 
+// trader2 ka code
+
+#define vector_size 5
+std::vector<int> zerovec(vector_size, 0);
+int g_profit = 0;
+AVLMap stock_index; // from stock to index of it in the array
+LinkedList input_lines; // llist of inputted lines
 bool compareVectors(const std::vector<int>& v1, const std::vector<int>& v2) {
     // Check if the size of the vectors is the same
     if (v1.size() != v2.size()) {
@@ -163,197 +164,338 @@ void g(LinkedList &zeroindeces, LinkedList &input_lines){
     g_profit += maxprofit;    
 }
 
-int main() {
 
-    Receiver rcv;
-    // sleep(5);
-    std::string message;    
+int main(int argc, char **argv){
+    // for(int i=0;i<argc;i++){std::cout<<argv[i]<<std::endl;}
+    // int a = std::stoi(argv[1]);
+    // std::cout<<a;
+    if(std::stoi(argv[1]) == 1){
+            Receiver rcv;
+            // sleep(5);
+            std::string message;    
 
-    
-    while(true){
-        message = rcv.readIML();
-        if(message.size() ==0 || message[0] == '\0'){continue;}
-        tokenizer("__reset__",'#');
-// usleep(100000);
-        // inside for each message
-        while (true){
-
-            std::string out="";
             
-            std::string line = tokenizer(message, '#');
-
-            if (line.empty()){break;}
-            tokenizer_in_msg("__reset__", ' ');
-
-            // process input (one linear combo)
-
-            int ite=0;
-            std::vector<std::string> linelst;
-            std::string lineobj = "";
-            //remove leading whitespaces
             while(true){
-                if(line[ite] == ' '){
-                    ite++;
+                message = rcv.readIML();
+                if(message.size() ==0 || message[0] == '\0'){continue;}
+                tokenizer("__reset__",'#');
+        // usleep(100000);
+                // inside for each message
+                while (true){
+
+                    std::string out="";
+
+                    // stock_name represents the string containing stock name
+                    // price give the price in string which needed to be converted to int
+                    // mode gives s if its sell and b if its buy
+                    
+                    std::string line = tokenizer(message, '#');
+
+                    if (line.empty()){break;}
+                    tokenizer_in_msg("__reset__", ' ');
+
+                    std::string stock_name = tokenizer_in_msg(line, ' '); if(stock_name.size()==0){break;}
+
+                    std::string price_str = tokenizer_in_msg(line, ' '); if(price_str.size()==0){break;}
+
+                    char mode;
+                    std::string mode_str = tokenizer_in_msg(line, '#');
+                    if(mode_str == "s"){mode = 's';}
+                    else if(mode_str == "b"){mode = 'b';}
+                    else{break;}
+
+                    int price;
+                    try{
+                        price = stoi(price_str);
+                    }
+                    catch (const std::invalid_argument& e){
+                        std::cerr << "Invalid argument: " << price_str << std::endl;
+                        price = 0;
+                    }
+
+                    // actual working 
+
+                    if(mode == 's'){
+                        if (b_qoute.containsKey(stock_name) && b_qoute.getValue(stock_name) == price){ // cancelling due to same price b and s
+                            b_qoute.remove(stock_name);
+                            out += notrade;
+                        }
+                        else{
+                            if(s_best.containsKey(stock_name)){ // already sold
+                                if(price < s_best.getValue(stock_name)){ // quote accepted
+                                    s_best.update(stock_name, price);
+                                    out = out + stock_name +" "+ price_str + " " + "b";
+                                }
+                                else{ // quote not accepted
+                                    if(s_qoute.containsKey(stock_name)){
+                                        if (price < s_qoute.getValue(stock_name) ) {s_qoute.update(stock_name,price);}
+                                    }
+                                    else{
+                                        s_qoute.insert(stock_name,price);
+                                    }
+                                    out = out + notrade;
+                                }
+                            }
+                            else if(b_best.containsKey(stock_name)){
+                                if(price < b_best.getValue(stock_name)){ // quote accepted
+                                    s_best.insert(stock_name, price);
+                                    out = out + stock_name +" "+ price_str + " " + "b";
+                                }
+                                else{ // quote not accepted
+                                    if(s_qoute.containsKey(stock_name)){
+                                        if (price < s_qoute.getValue(stock_name)) {s_qoute.update(stock_name,price);}
+                                    }
+                                    else{
+                                        s_qoute.insert(stock_name,price);
+                                    }
+                                    out = out + notrade;
+                                }
+                            }
+                            else{ // first time stock encountered
+                                s_best.insert(stock_name, price);
+                                out = out + stock_name +" "+ price_str + " " + "b";
+                            }
+                        }
+                    }
+
+                    else if(mode == 'b'){
+                        if (s_qoute.containsKey(stock_name) && s_qoute.getValue(stock_name) == price){ // cancelling due to same price b and s
+                            s_qoute.remove(stock_name);
+                            out += notrade;
+                        }
+                        else{
+                            if(b_best.containsKey(stock_name)){ // already sold
+                                if(price > b_best.getValue(stock_name)){ // quote accepted
+                                    b_best.update(stock_name, price);
+                                    out = out + stock_name +" "+ price_str + " " + "s";
+                                }
+                                else{ // quote not accepted
+                                    if(b_qoute.containsKey(stock_name)){
+                                        if ( price > b_qoute.getValue(stock_name)) {b_qoute.update(stock_name,price);}
+                                    }
+                                    else{
+                                        b_qoute.insert(stock_name,price);
+                                    }
+                                    out = out + notrade;
+                                }
+                            }
+                            else if(s_best.containsKey(stock_name)){
+                                if(price > s_best.getValue(stock_name)){ // quote accepted
+                                    b_best.insert(stock_name, price);
+                                    out = out + stock_name +" "+ price_str + " " + "s";
+                                }
+                                else{ // quote not accepted
+                                    if(b_qoute.containsKey(stock_name)){
+                                        if (price > b_qoute.getValue(stock_name) ) {b_qoute.update(stock_name,price);}
+                                    }
+                                    else{
+                                        b_qoute.insert(stock_name,price);
+                                    }
+                                    out = out + notrade;
+                                }
+                            }
+                            else{ // first time stock encountered
+                                b_best.insert(stock_name, price);
+                                out = out + stock_name +" "+ price_str + " " + "s";
+                            }
+                        }
+                    }
+
+
+                    // ________________________________________
+                    // out+=  "\n";
+                    // for(int i=0;i<out.size();i++){
+                    //     if(out[i]=='\0'){continue;}
+                    //     std::cout<<out[i];
+                    // }
+                    std::cout<<out<<std::endl;
                 }
-                else{break;}
+                // std::cout<< message << std::endl;
+
+                // ____________ for every message
+                if(message[message.size()-1] == '$'){ break;}
             }
 
-            while(true){
-                if (line[ite] == '\0'){
-                    if (lineobj != ""){
-                        linelst.push_back(lineobj); // push the str obj
-                        lineobj = "";
-                    }
-                    break;
-                } // to reach end of line
+        // _________________________________________________________
+            // std::cout<< out;
+            rcv.terminate();
+            return 0;
+ 
+    }
+    else if(std::stoi(argv[1]) == 2){
+            Receiver rcv;
+            // sleep(5);
+            std::string message;    
 
-                if (line[ite] == ' '){
-                    linelst.push_back(lineobj); // push the str obj
-                    lineobj = "";
-                    while(true){ // remove further whitespaces
+            
+            while(true){
+                message = rcv.readIML();
+                if(message.size() ==0 || message[0] == '\0'){continue;}
+                tokenizer("__reset__",'#');
+        // usleep(100000);
+                // inside for each message
+                while (true){
+
+                    std::string out="";
+                    
+                    std::string line = tokenizer(message, '#');
+
+                    if (line.empty()){break;}
+                    tokenizer_in_msg("__reset__", ' ');
+
+                    // process input (one linear combo)
+
+                    int ite=0;
+                    std::vector<std::string> linelst;
+                    std::string lineobj = "";
+                    //remove leading whitespaces
+                    while(true){
                         if(line[ite] == ' '){
                             ite++;
                         }
                         else{break;}
                     }
-                }
 
-                lineobj += line[ite];
-                ite++; 
-
-            }
-
-            // removing extra strings at the last
-
-            std::string lastele = linelst.back();
-            if (not (lastele=="b" || lastele=="s")){
-                linelst.pop_back();
-            }
-
-            // processing line ends here
-
-            if (linelst.size() < 2){break;}
-
-            // mode is last element
-            char mode;
-            std::string mode_str = linelst.back();
-            if(mode_str == "s"){mode = 's';}
-            else if(mode_str == "b"){mode = 'b';}
-            else{break;}
-
-            // price is 2nd last element
-            std::string price_str = linelst[linelst.size() - 2];
-            int price;
-            try{
-                if(mode=='b')price = stoi(price_str);
-                else if(mode=='s')price = (-1)*stoi(price_str);
-            }
-            catch (const std::invalid_argument& e){
-                std::cerr << "Invalid argument: " << price_str << std::endl;
-                price = 0;
-            }
-
-            // actual working 
-            linelst.pop_back(); // popping b/s
-            linelst.pop_back(); // popping price
-
-            // process through the input vector
-            std::vector<int> append_vector(vector_size,0);
-            // for(int i=0;i<vector_size;++i){ //initialize to 0
-            //     append_vector[i]=0;
-            // }
-            for (int i=0; i < linelst.size(); i=i+2){
-                if(mode=='b'){// no problem.. we just append to the list
-                    if(stock_index.containsKey(linelst[i])){
-                        append_vector[stock_index.getValue(linelst[i])] = stoi(linelst[i+1]);
-                    }
-                    else{
-                        int sz = stock_index.getSize();
-                        stock_index.insert(linelst[i],sz);
-                        append_vector[sz] = stoi(linelst[i+1]);
-                    }
-                }
-                else if(mode=='s'){// take negative of everything
-                    if(stock_index.containsKey(linelst[i])){
-                        append_vector[stock_index.getValue(linelst[i])] = (-1)*stoi(linelst[i+1]);
-                    }
-                    else{
-                        int sz = stock_index.getSize();
-                        stock_index.insert(linelst[i],sz);
-                        append_vector[sz] = (-1)*stoi(linelst[i+1]);
-                    }
-                }
-            }
-
-            //CANCELLATION LAWS
-            bool flag1=false; // tells if cancellation happens or not.
-            for(int i=0;i < input_lines.getSize(); ++i){
-                if(compareVectors(input_lines.getNodeByIndex(i)->data, append_vector)){
-                    if(mode != input_lines.getNodeByIndex(i)->mode){
-                        input_lines.deleteVectorByIndex(i);
-                        flag1=true;
-                        break;
-                    }
-                    else{
-                        if(input_lines.getNodeByIndex(i)->price < price){
-                            Node* temp = input_lines.getNodeByIndex(i);
-                            temp->price = price;
-                            temp->inpline = line;
-                            temp->mode = mode;
-                            flag1=true;
+                    while(true){
+                        if (line[ite] == '\0'){
+                            if (lineobj != ""){
+                                linelst.push_back(lineobj); // push the str obj
+                                lineobj = "";
+                            }
                             break;
+                        } // to reach end of line
+
+                        if (line[ite] == ' '){
+                            linelst.push_back(lineobj); // push the str obj
+                            lineobj = "";
+                            while(true){ // remove further whitespaces
+                                if(line[ite] == ' '){
+                                    ite++;
+                                }
+                                else{break;}
+                            }
+                        }
+
+                        lineobj += line[ite];
+                        ite++; 
+
+                    }
+
+                    // removing extra strings at the last
+
+                    std::string lastele = linelst.back();
+                    if (not (lastele=="b" || lastele=="s")){
+                        linelst.pop_back();
+                    }
+
+                    // processing line ends here
+
+                    if (linelst.size() < 2){break;}
+
+                    // mode is last element
+                    char mode;
+                    std::string mode_str = linelst.back();
+                    if(mode_str == "s"){mode = 's';}
+                    else if(mode_str == "b"){mode = 'b';}
+                    else{break;}
+
+                    // price is 2nd last element
+                    std::string price_str = linelst[linelst.size() - 2];
+                    int price;
+                    try{
+                        if(mode=='b')price = stoi(price_str);
+                        else if(mode=='s')price = (-1)*stoi(price_str);
+                    }
+                    catch (const std::invalid_argument& e){
+                        std::cerr << "Invalid argument: " << price_str << std::endl;
+                        price = 0;
+                    }
+
+                    // actual working 
+                    linelst.pop_back(); // popping b/s
+                    linelst.pop_back(); // popping price
+
+                    // process through the input vector
+                    std::vector<int> append_vector(vector_size,0);
+                    // for(int i=0;i<vector_size;++i){ //initialize to 0
+                    //     append_vector[i]=0;
+                    // }
+                    for (int i=0; i < linelst.size(); i=i+2){
+                        if(mode=='b'){// no problem.. we just append to the list
+                            if(stock_index.containsKey(linelst[i])){
+                                append_vector[stock_index.getValue(linelst[i])] = stoi(linelst[i+1]);
+                            }
+                            else{
+                                int sz = stock_index.getSize();
+                                stock_index.insert(linelst[i],sz);
+                                append_vector[sz] = stoi(linelst[i+1]);
+                            }
+                        }
+                        else if(mode=='s'){// take negative of everything
+                            if(stock_index.containsKey(linelst[i])){
+                                append_vector[stock_index.getValue(linelst[i])] = (-1)*stoi(linelst[i+1]);
+                            }
+                            else{
+                                int sz = stock_index.getSize();
+                                stock_index.insert(linelst[i],sz);
+                                append_vector[sz] = (-1)*stoi(linelst[i+1]);
+                            }
                         }
                     }
+
+                    //CANCELLATION LAWS
+                    bool flag1=false; // tells if cancellation happens or not.
+                    for(int i=0;i < input_lines.getSize(); ++i){
+                        if(compareVectors(input_lines.getNodeByIndex(i)->data, append_vector)){
+                            if(mode != input_lines.getNodeByIndex(i)->mode){
+                                input_lines.deleteVectorByIndex(i);
+                                flag1=true;
+                                break;
+                            }
+                            else{
+                                if(input_lines.getNodeByIndex(i)->price < price){
+                                    Node* temp = input_lines.getNodeByIndex(i);
+                                    temp->price = price;
+                                    temp->inpline = line;
+                                    temp->mode = mode;
+                                    flag1=true;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                    if(flag1==false){
+                        input_lines.addVector(append_vector, price, line, mode);
+                    }
+                    else{std::cout<<notrade<<"\r"<<std::endl;continue;}
+
+                    // std::cout<<"summa";
+                    // algo
+                    LinkedList zeroindices;
+                    std::vector<int> sumvec(vector_size,0);
+                    std::vector<int> arrind;
+                    int n = input_lines.getSize();
+                    int pricesum = 0;
+                    f(input_lines, n, arrind, sumvec, zeroindices, pricesum);
+                    //std::cout<<input_lines.getSize()<<"\n";
+                    g(zeroindices,input_lines);
                 }
+                //input_lines.printListInOrder();
+                // std::cout<< message << std::endl;
+
+
+
+                // ____________ for every message
+                if(message[message.size()-1] == '$'){ break;}
             }
-            if(flag1==false){
-                input_lines.addVector(append_vector, price, line, mode);
-            }
-            else{std::cout<<notrade<<"\r"<<std::endl;continue;}
 
-            // std::cout<<"summa";
-            // algo
-            LinkedList zeroindices;
-            std::vector<int> sumvec(vector_size,0);
-            std::vector<int> arrind;
-            int n = input_lines.getSize();
-            int pricesum = 0;
-            f(input_lines, n, arrind, sumvec, zeroindices, pricesum);
-            //std::cout<<input_lines.getSize()<<"\n";
-            g(zeroindices,input_lines);
-            //std::cout<<"after";
-            // std::cerr<<input_lines.getSize();
-            // //TEMPORARY: checking if f works
-            // std::cout<<zeroindices.getSize();
-            // for (int i=0;i < zeroindices.getSize(); ++i){
-            //     for (const auto& word : zeroindices.getNodeByIndex(i)->data) {
-            //         std::cout << "\"" << word << "\"";
-            //     }
-            //     std::cout<<std::endl;
-            // }
-            
-            
-
-            // ________________________________________
-            // out+=  "\n";
-            // for(int i=0;i<out.size();i++){
-            //     if(out[i]=='\0'){continue;}
-            //     std::cout<<out[i];
-            // }
-            // std::cout<<out<<"\r\n";
-        }
-        //input_lines.printListInOrder();
-        // std::cout<< message << std::endl;
-
-
-
-        // ____________ for every message
-        if(message[message.size()-1] == '$'){ break;}
+        // _________________________________________________________
+            // std::cout<< out;
+            std::cout<<g_profit<<"\r"<<std::endl;
+            rcv.terminate();
+            return 0;
     }
-
-// _________________________________________________________
-    // std::cout<< out;
-    std::cout<<g_profit<<"\r"<<std::endl;
-    rcv.terminate();
-    return 0;
+    else{
+        std::cout<<"error bhai";
+    }
 }

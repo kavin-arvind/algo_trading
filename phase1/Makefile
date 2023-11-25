@@ -12,11 +12,11 @@ trader1_1: trader1_1.cpp receiver.h map.h
 iml: iml.cpp
 	g++ -std=c++20 iml.cpp -o iml
 
-runpart1: iml trader1_1
-	./trader1_1 1 > output.txt &
+runpart1: iml trader
+	./trader 1 > output.txt &
 	sleep 1
 	./iml inputs/data1.txt
-	diff outputs/out1.txt output.txt
+	diff -Bw outputs/out1.txt output.txt
 
 runpart1_own: iml trader1_1
 	./trader1_1 1 > output.txt &
