@@ -8,16 +8,16 @@ std::string notrade = "No trade";
 std::vector<int> zerovec(vector_size, 0);
 char newline = '\n';
 std::string str_newline = "\n";
-AVLMap b_qoute; // {stock_name, value} best quote which is not cancelled
-AVLMap s_qoute; // {stock_name, value} """
+//AVLMap b_qoute; // {stock_name, value} best quote which is not cancelled
+//AVLMap s_qoute; // {stock_name, value} """
 
 AVLMap stock_index; // from stock to index of it in the array
 // AVLMap stocks; // {stock_name, predicted value} 
 LinkedList input_lines; // llist of inputted lines
 
 
-AVLMap b_best; // {stock_name, predicted value} stores best price of a stock bought ever
-AVLMap s_best; // {stock_name, predicted value} stores best price of a stock bought ever
+//AVLMap b_best; // {stock_name, predicted value} stores best price of a stock bought ever
+//AVLMap s_best; // {stock_name, predicted value} stores best price of a stock bought ever
 
 
 std::string tokenizer(std::string txt, char l){ // delimiter = l
@@ -132,9 +132,13 @@ void f(LinkedList &LL, int n, std::vector<int> &arrind, std::vector<int> &sumvec
 
 // zero indeces will have invalid entries of price, mode and stuffs.
 void g(LinkedList &zeroindeces, LinkedList &input_lines){
+    //std::cout<<"inside";
     // std::vector<int> profit[zeroindeces.getSize()];
-    if(zeroindeces.getSize()==0)return;
-    int maxindex_zeroindeces = -1;
+    if(zeroindeces.getSize()==0){
+        std::cout<<"No trade\r\n";
+        return;
+    }
+    int maxindex_zeroindeces = 0;
     int maxprofit = zeroindeces.getNodeByIndex(0)->price;
     for(int i=0;i<zeroindeces.getSize();++i){
         if(maxprofit < zeroindeces.getNodeByIndex(i)->price){
@@ -144,18 +148,18 @@ void g(LinkedList &zeroindeces, LinkedList &input_lines){
     }
     // now maxprofit contains the max profit, and maxindex_zeroindeces contains the indeces..
     // that is the trade we'll be doing, and we delete corresponding trades.
-    for(int i = zeroindeces.getNodeByIndex(maxindex_zeroindeces)->data.size()-1; i>=0; i = i-1){ // coming in decending order
+    for(int i = zeroindeces.getNodeByIndex(maxindex_zeroindeces)->data.size()-1; i>=0; --i){ // coming in decending order
         std::string outputting = input_lines.getNodeByIndex(zeroindeces.getNodeByIndex(maxindex_zeroindeces)->data[i])->inpline;
         std::cout<< outputting.substr(0,outputting.size()-1);
-        if(input_lines.getNodeByIndex(zeroindeces.getNodeByIndex(maxindex_zeroindeces)->data[i])->mode == 'b')std::cout<<'s'<<std::endl;
-        else if(input_lines.getNodeByIndex(zeroindeces.getNodeByIndex(maxindex_zeroindeces)->data[i])->mode == 's')std::cout<<'b'<<std::endl;
+        if(input_lines.getNodeByIndex(zeroindeces.getNodeByIndex(maxindex_zeroindeces)->data[i])->mode == 'b')std::cout<<"s#\r"<<std::endl;
+        else if(input_lines.getNodeByIndex(zeroindeces.getNodeByIndex(maxindex_zeroindeces)->data[i])->mode == 's')std::cout<<"b#\r"<<std::endl;
 
         // input_lines.deleteVectorByIndex(zeroindeces.getNodeByIndex(maxindex_zeroindeces)->data[i]);
     }
-    for(int i = 0; i < zeroindeces.getNodeByIndex(maxindex_zeroindeces)->data.size(); ++i){ // coming in decending order
+    for(int i = 0; i < zeroindeces.getNodeByIndex(maxindex_zeroindeces)->data.size(); ++i){ // coming in ascending order
         input_lines.deleteVectorByIndex(zeroindeces.getNodeByIndex(maxindex_zeroindeces)->data[i]);
     }
-    std::cout<<maxprofit<<std::endl;
+    std::cout<<maxprofit<<"\r"<<std::endl;
     
 }
 
@@ -307,8 +311,9 @@ int main() {
             int n = input_lines.getSize();
             int pricesum = 0;
             f(input_lines, n, arrind, sumvec, zeroindices, pricesum);
+            //std::cout<<input_lines.getSize()<<"\n";
             g(zeroindices,input_lines);
-            
+            //std::cout<<"after";
 
             // ________________________________________
             // out+=  "\n";
