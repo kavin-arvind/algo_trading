@@ -135,8 +135,8 @@ void generateArrays(const std::vector<int>& original, std::vector<int>& current,
         // }
         // std::cout << std::endl;
         for (int i=0;i < current.size(); ++i){
-            std::vector<int> &arrvec_temp = *arrvec[i];
-            ixVector(arrvec_temp,current[i]);
+            std::vector<int> arrvec_temp = *arrvec[i]; 
+            ixVector(arrvec_temp,current[i]); 
             sumvec = add2Vectors(sumvec, arrvec_temp);
         }
         if (compareVectors(sumvec,zerovec)){
@@ -145,10 +145,12 @@ void generateArrays(const std::vector<int>& original, std::vector<int>& current,
                 pricesum = pricesum + arrprices[i]*current[i];
             }
             if (pricesum > 0){
+                // std::cout<<"got an arbit"<<std::endl;
                 zeroindices.addVector(arrind, pricesum, "a", 'n', 1);
                 zeroquants.addVector(current, pricesum, "a", 'n', 1);
             }
         }
+        else{ixVector(sumvec,0);}
         return;
     }
 
@@ -173,8 +175,9 @@ void f(LinkedList3 &LL, int n, std::vector<int> &arrind, std::vector<int> &sumve
     Node3* tempo = LL.getNodeByIndex(n-1);
     arrind.push_back(n-1);
     //sumvec = add2Vectors(sumvec, LL.getNodeByIndex(n-1)->data);
-    arrquant.push_back(tempo->quantity); 
-    arrvec.push_back(&tempo->data); 
+    arrquant.push_back(tempo->quantity);
+    std::vector<int>* tempo_data = &tempo->data;
+    arrvec.push_back(tempo_data); 
     arrprices.push_back(tempo->price);
     //pricesum += LL.getNodeByIndex(n-1)->price;
     f(LL, n-1, arrind, sumvec, zeroindices, zeroquants, arrprices, arrquant, arrvec);
