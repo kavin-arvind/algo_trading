@@ -4,12 +4,12 @@
 
 all: trader iml
 
-trader: trader.cpp receiver.h linked_list.h map.h
+trader: trader.cpp receiver.h header.h
 	g++ -std=c++20 trader.cpp -o trader
-trader1_1: trader1_1.cpp receiver.h map.h
+trader1_1: trader1_1.cpp receiver.h header.h
 	g++ -std=c++20 trader1_1.cpp -o trader1_1
 
-trader3: trader3.cpp linked_list_3.h map.h receiver.h
+trader3: trader3.cpp receiver.h header.h
 	g++ -std=c++20 trader3.cpp -o trader3
 	
 iml: iml.cpp
