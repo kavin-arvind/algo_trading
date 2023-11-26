@@ -516,6 +516,9 @@ int main(int argc, char **argv){
             rcv.terminate();
             return 0;
     }
+    else if(std::stoi(argv[1]) == 3){
+        
+    }
     else{
         std::cout<<"error bhai";
     }

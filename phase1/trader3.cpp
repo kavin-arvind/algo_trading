@@ -437,7 +437,7 @@ int main() {
         
             g(zeroindices, zeroquants, input_lines);
 
-            input_lines.printListInOrder();
+            // input_lines.printListInOrder();
             //std::cout<<"after";
             // std::cerr<<input_lines.getSize();
             // //TEMPORARY: checking if f works
