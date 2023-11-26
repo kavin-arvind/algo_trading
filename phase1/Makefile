@@ -9,6 +9,9 @@ trader: trader.cpp receiver.h linked_list.h map.h
 trader1_1: trader1_1.cpp receiver.h map.h
 	g++ -std=c++20 trader1_1.cpp -o trader1_1
 
+trader3: trader3.cpp linked_list_3.h map.h receiver.h
+	g++ -std=c++20 trader3.cpp -o trader3
+	
 iml: iml.cpp
 	g++ -std=c++20 iml.cpp -o iml
 
@@ -41,10 +44,10 @@ runpart3: iml trader
 	./iml inputs/data3.txt
 	diff outputs/out3.txt output.txt
 
-runpart3_own: iml trader
-	./trader 3 > part3_output.txt &
+runpart3_own: iml trader3
+	./trader3 3 > part3_output.txt &
 	sleep 1
-	./iml part2_testcases/input.txt
+	./iml part3_testcases/input.txt
 
 clean:
 	rm -rf output.txt trader iml

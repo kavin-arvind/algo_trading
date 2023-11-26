@@ -1,0 +1,15 @@
+Receiver is listening on port 8888
+
+0 (Price: 10, Inpline: a, Mode: n, Quantity: 1) -> nullptr
+
+X 1 Y -1 10 1 s#
+
+nullptr
+
+No trade
+
+1 0 (Price: 10, Inpline: a, Mode: n, Quantity: 1) -> 1 (Price: 10, Inpline: a, Mode: n, Quantity: 1) -> nullptr
+
+Z -1 Y 1 -15 0 s#
+Z 1 X -1 10 1 s#
+20
