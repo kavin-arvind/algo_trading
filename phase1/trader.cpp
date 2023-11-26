@@ -144,7 +144,7 @@ void g(LinkedList &zeroindeces, LinkedList &input_lines){
     }
     // now maxprofit contains the max profit, and maxindex_zeroindeces contains the indeces..
     // that is the trade we'll be doing, and we delete corresponding trades.
-    for(int i = zeroindeces.getNodeByIndex(maxindex_zeroindeces)->data.size()-1; i>=0; --i){ // coming in decending order
+    for(int i=0; i < zeroindeces.getNodeByIndex(maxindex_zeroindeces)->data.size(); ++i){ // coming in decending order
         std::string outputting = input_lines.getNodeByIndex(zeroindeces.getNodeByIndex(maxindex_zeroindeces)->data[i])->inpline;
         std::cout<< outputting.substr(0,outputting.size()-1);
         if(input_lines.getNodeByIndex(zeroindeces.getNodeByIndex(maxindex_zeroindeces)->data[i])->mode == 'b')std::cout<<"s#\r"<<std::endl;
@@ -274,7 +274,7 @@ void g3(LinkedList3 &zeroindeces, LinkedList3 &zeroquants, LinkedList3 &input_li
     }
     // now maxprofit contains the max profit, and maxindex_zeroindeces contains the indeces..
     // that is the trade we'll be doing, and we delete corresponding trades.
-    for(int i = zeroindeces.getNodeByIndex(maxindex_zeroindeces)->data.size()-1; i>=0; --i){ // coming in decending order
+    for(int i = 0; i < zeroindeces.getNodeByIndex(maxindex_zeroindeces)->data.size(); ++i){ // coming in decending order
         std::string outputting = input_lines3.getNodeByIndex(zeroindeces.getNodeByIndex(maxindex_zeroindeces)->data[i])->inpline; // contains the whole line including b and quantity
         outputting = string_converter(outputting, zeroquants.getNodeByIndex(maxindex_zeroindeces)->data[i]);
         std::cout<< outputting.substr(0,outputting.size()-1);
