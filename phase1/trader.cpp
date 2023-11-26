@@ -856,6 +856,6 @@ int main(int argc, char **argv){
         
     }
     else{
-        std::cout<<"error bhai";
+        std::cout<<"Please provide a valid argument.";
     }
 }
