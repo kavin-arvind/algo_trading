@@ -51,10 +51,9 @@ std::string tokenizer_in_msg(std::string txt, char l){ // delimiter = l
 
 // trader2 ka code
 
-#define vector_size 5
-std::vector<int> zerovec(vector_size, 0);
-int g_profit = 0;
 AVLMap stock_index; // from stock to index of it in the array
+std::vector<int> zerovec(stock_index.getSize(), 0);
+int g_profit = 0;
 LinkedList input_lines; // llist of inputted lines
 bool compareVectors(const std::vector<int>& v1, const std::vector<int>& v2) {
     // Check if the size of the vectors is the same
@@ -428,8 +427,8 @@ int main(int argc, char **argv){
                     linelst.pop_back(); // popping price
 
                     // process through the input vector
-                    std::vector<int> append_vector(vector_size,0);
-                    // for(int i=0;i<vector_size;++i){ //initialize to 0
+                    std::vector<int> append_vector(stock_index.getSize(),0);
+                    // for(int i=0;i<stock_index.getSize();++i){ //initialize to 0
                     //     append_vector[i]=0;
                     // }
                     for (int i=0; i < linelst.size(); i=i+2){
@@ -440,7 +439,12 @@ int main(int argc, char **argv){
                             else{
                                 int sz = stock_index.getSize();
                                 stock_index.insert(linelst[i],sz);
-                                append_vector[sz] = stoi(linelst[i+1]);
+                                append_vector.push_back(stoi(linelst[i+1]));
+                                for(int j=0;j<input_lines.getSize();j++){
+                                    input_lines.getNodeByIndex(j)->data.push_back(0);
+                                }
+                                zerovec.push_back(0);
+                                // append_vector[sz] = stoi(linelst[i+1]);
                             }
                         }
                         else if(mode=='s'){// take negative of everything
@@ -450,11 +454,16 @@ int main(int argc, char **argv){
                             else{
                                 int sz = stock_index.getSize();
                                 stock_index.insert(linelst[i],sz);
-                                append_vector[sz] = (-1)*stoi(linelst[i+1]);
+                                append_vector.push_back((-1)*stoi(linelst[i+1]));
+                                for(int j=0;j<input_lines.getSize();j++){
+                                    input_lines.getNodeByIndex(j)->data.push_back(0);
+                                }
+                                zerovec.push_back(0);
+                                // append_vector[sz] = (-1)*stoi(linelst[i+1]);
+
                             }
                         }
                     }
-
                     //CANCELLATION LAWS
                     bool flag1=false; // tells if cancellation happens or not.
                     for(int i=0;i < input_lines.getSize(); ++i){
@@ -484,7 +493,7 @@ int main(int argc, char **argv){
                     // std::cout<<"summa";
                     // algo
                     LinkedList zeroindices;
-                    std::vector<int> sumvec(vector_size,0);
+                    std::vector<int> sumvec(stock_index.getSize(),0);
                     std::vector<int> arrind;
                     int n = input_lines.getSize();
                     int pricesum = 0;

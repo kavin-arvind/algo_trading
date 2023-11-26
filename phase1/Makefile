@@ -18,7 +18,7 @@ runpart1: iml trader
 	./iml inputs/data1.txt
 	diff -Bw outputs/out1.txt output.txt
 
-runpart1_own: iml trader1_1
+runpart1_own: iml trader
 	./trader1_1 1 > output.txt &
 	sleep 1
 	./iml input.txt
@@ -40,6 +40,11 @@ runpart3: iml trader
 	sleep 1
 	./iml inputs/data3.txt
 	diff outputs/out3.txt output.txt
+
+runpart3_own: iml trader
+	./trader 3 > part3_output.txt &
+	sleep 1
+	./iml part2_testcases/input.txt
 
 clean:
 	rm -rf output.txt trader iml
