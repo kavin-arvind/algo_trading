@@ -1,6 +1,23 @@
-Xavier 20 Yuno 10 5 s#
-Zashwin 7 Yuno 5 200 b#
-Zashwin 7 Yuno 5 400 b#
-Zashwin 7 Yuno 5 200 s#
-Zashwin 7 Yuno 5 200 b#
-Zashwin -7 Xavier 20 Yuno 5 20 b#
+A 1 B -1 20 b#
+B 1 C -1 20 b#
+C 1 D -1 20 b#
+D 1 E -1 20 b#
+E 1 F -1 20 b#
+F 1 G -1 20 b#
+G 1 H -1 20 b#
+G 1 H -1 230 s#
+G 1 H -1 40 b#
+H 1 I -1 20 b#
+I 1 J -1 20 b#
+J 1 K -1 20 b#
+K 1 L -1 20 b#
+L 1 M -1 20 b#
+M 1 N -1 20 b#
+N 1 O -1 20 b#
+O 1 P -1 20 b#
+P 1 Q -1 20 b#
+Q 1 R -1 20 b#
+R 1 S -1 20 b#
+S 1 T -1 20 b#
+T 1 A -1 20 b#
+
