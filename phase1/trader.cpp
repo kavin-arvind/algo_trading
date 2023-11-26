@@ -137,7 +137,7 @@ void g(LinkedList &zeroindeces, LinkedList &input_lines){
     //std::cout<<"inside";
     // std::vector<int> profit[zeroindeces.getSize()];
     if(zeroindeces.getSize()==0){
-        std::cout<<"No trade\r\n";
+        std::cout<<notrade<<"\r\n";
         return;
     }
     int maxindex_zeroindeces = 0;
