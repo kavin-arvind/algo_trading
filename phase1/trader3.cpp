@@ -99,6 +99,12 @@ std::vector<int> sub2Vectors(const std::vector<int>& v1, const std::vector<int>&
     return result;
 }
 
+void ixVector(std::vector<int>& vec, int multiplier) {
+    for (int& element : vec) {
+        element *= multiplier;
+    }
+}
+
 // LETS GO 
 
 //O(2^n)
@@ -110,25 +116,61 @@ std::vector<int> sub2Vectors(const std::vector<int>& v1, const std::vector<int>&
 // zeroindices - list of all sums that give zero
 // pricesum
 
-void f(LinkedList3 &LL, int n, std::vector<int> &arrind, std::vector<int> &sumvec, LinkedList3 &zeroindices, int pricesum){
+void f(LinkedList3 &LL, int n, std::vector<int> &arrind, std::vector<int> &sumvec, LinkedList3 &zeroindices, LinkedList3 &zeroquants, std::vector<int> &arrprices, std::vector<int> &arrquant, std::vector<std:vector*> &arrvec){
     if ( n==0 ){
-        if(compareVectors(sumvec,zerovec)){
-            if(pricesum > 0){
-                zeroindices.addVector(arrind, pricesum, "a", 'n');
+        int siz = arrind.size();
+        generateArrays(arrquant, current, 0, arrind, sumvec, zeroindices, zeroquants, arrprices, arrvec);
+        return;
+    }
+
+
+    Node3* tempo = LL.getNodeByIndex(n-1);
+    arrind.push_back(n-1);
+    //sumvec = add2Vectors(sumvec, LL.getNodeByIndex(n-1)->data);
+    arrquant.push_back(tempo->quantity); 
+    arrvec.push_back(&tempo->data); 
+    arrprices.push_back(tempo->price);
+    //pricesum += LL.getNodeByIndex(n-1)->price;
+    f(LL, n-1, arrind, sumvec, zeroindices, arrprices, arrquant, arrvec);
+    arrind.pop_back();
+    //sumvec = sub2Vectors(sumvec, LL.getNodeByIndex(n-1)->data);
+    arrquant.pop_back(); 
+    arrvec.pop_back(); 
+    arrprices.pop_back(); 
+    //pricesum -= LL.getNodeByIndex(n-1)->price;
+    f(LL, n-1, arrind, sumvec, zeroindices, arrprices, arrquant, arrvec);
+    return;
+}
+
+void generateArrays(const std::vector<int>& original, std::vector<int>& current, int index, std::vector<int> &arrind, std::vector<int> &sumvec, LinkedList3 &zeroindices, LinkedList3 &zeroquants, std::vector<int> &arrprices, std::vector<std:vector*> &arrvec) {
+    // Base case: print the current array
+    if (index == original.size()) {
+        // for (int element : current) {
+        //     std::cout << element << " ";
+        // }
+        // std::cout << std::endl;
+        for (int i=0;i < current.size; ++i){
+            sumvec = add2Vectors(sumvec, ixVector(arrvec[i],current[i]));
+        }
+        if (compareVectors(sumvec,zerovec)){
+            int pricesum=0;
+            for (int i=0;i < current.size; ++i){
+                pricesum = pricesum + arrprices[i]*current[i];
+            }
+            if (pricesum > 0){
+                zeroindices.addVector(arrind, pricesum, "a", 'n', 1);
+                zeroquants.addVector(current, pricesum, "a", 'n', 1);
             }
         }
         return;
     }
 
-    arrind.push_back(n-1);
-    sumvec = add2Vectors(sumvec, LL.getNodeByIndex(n-1)->data);
-    pricesum += LL.getNodeByIndex(n-1)->price;
-    f(LL, n-1, arrind, sumvec, zeroindices, pricesum);
-    arrind.pop_back();
-    sumvec = sub2Vectors(sumvec, LL.getNodeByIndex(n-1)->data);
-    pricesum -= LL.getNodeByIndex(n-1)->price;
-    f(LL, n-1, arrind, sumvec, zeroindices, pricesum);
-    return;
+    // Recursively generate arrays for the current index
+    for (int i = 0; i <= original[index]; ++i) {
+        current[index] = i;
+        //generateArrays(original, current, index + 1);
+        generateArrays(original, current, index + 1, arrind, sumvec, zeroindices, zeroquants, arrprices, arrvec);
+    }
 }
 
 // zero indeces will have invalid entries of price, mode and stuffs.
@@ -320,20 +362,19 @@ int main() {
                         else{// quant > input_lines.getNodeByIndex(i)->quantity
                             quant = quant - input_lines.getNodeByIndex(i)->quantity;
                             input_lines.deleteVectorByIndex(i);
+                            //LINE PROCESSING HAS TO BE DONE
                             flag2=0;
                             break;
                         }
                     }
-                    // else{
-                    //     if(input_lines.getNodeByIndex(i)->price < price){
-                    //         Node3* temp = input_lines.getNodeByIndex(i);
-                    //         temp->price = price;
-                    //         temp->inpline = line;
-                    //         temp->mode = mode;
-                    //         flag2=true;
-                    //         break;
-                    //     }
-                    // }
+                    else(mode == input_lines.getNodeByIndex(i)->mode && price == input_lines.getNodeByIndex(i)->price){
+                        Node3* temp = input_lines.getNodeByIndex(i);
+                        quant = quant + temp->quantity;
+                        input_lines.deleteVectorByIndex(i);
+                        //LINE PROCESSING HAS TO BE DONE
+                        flag2=0;
+                        break;
+                    }
                 }
             }
             if(flag2==0){
@@ -344,11 +385,15 @@ int main() {
             // std::cout<<"summa";
             // algo
             LinkedList3 zeroindices;
+            LinkedList3 zeroquants;
             std::vector<int> sumvec(vector_size,0);
             std::vector<int> arrind;
+            std::vector<int> arrquant;
+            std::vector<int> arrprices;
+            std::vector<std:vector*> arrvec;
             int n = input_lines.getSize();
             int pricesum = 0;
-            f(input_lines, n, arrind, sumvec, zeroindices, pricesum);
+            f(input_lines, n, arrind, sumvec, zeroindices, zeroquants, arrprices, arrquant, arrvec);
             //std::cout<<input_lines.getSize()<<"\n";
             g(zeroindices,input_lines);
             //std::cout<<"after";
