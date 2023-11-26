@@ -220,7 +220,7 @@ void generateArrays(const std::vector<int>& original, std::vector<int>& current,
     }
 
     // Recursively generate arrays for the current index
-    for (int i = 0; i <= original[index]; ++i) {
+    for (int i = 1; i <= original[index]; ++i) {
         current[index] = i;
         //generateArrays(original, current, index + 1);
         generateArrays(original, current, index + 1, arrind, sumvec, zeroindices, zeroquants, arrprices, arrvec);
@@ -231,7 +231,7 @@ void generateArrays(const std::vector<int>& original, std::vector<int>& current,
 void f3(LinkedList3 &LL, int n, std::vector<int> &arrind, std::vector<int> &sumvec, LinkedList3 &zeroindices, LinkedList3 &zeroquants, std::vector<int> &arrprices, std::vector<int> &arrquant, std::vector<std::vector<int>*> &arrvec){
     if ( n==0 ){
         int siz = arrind.size();
-        std::vector<int> current(arrquant.size(),0);
+        std::vector<int> current(arrquant.size(),1);
         generateArrays(arrquant, current, 0, arrind, sumvec, zeroindices, zeroquants, arrprices, arrvec);
         return;
     }
