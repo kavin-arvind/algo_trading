@@ -2,18 +2,19 @@
 
 // #include <map>
 #include "map.h"
-#include "linked_list.h"
-#define vector_size 100
+#include "linked_list_3.h"
+#define vector_size 5
 std::string notrade = "No trade";
 std::vector<int> zerovec(vector_size, 0);
 char newline = '\n';
 std::string str_newline = "\n";
+int g_profit = 0;
 //AVLMap b_qoute; // {stock_name, value} best quote which is not cancelled
 //AVLMap s_qoute; // {stock_name, value} """
 
 AVLMap stock_index; // from stock to index of it in the array
 // AVLMap stocks; // {stock_name, predicted value} 
-LinkedList input_lines; // llist of inputted lines
+LinkedList3 input_lines; // llist of inputted lines
 
 
 //AVLMap b_best; // {stock_name, predicted value} stores best price of a stock bought ever
@@ -109,7 +110,7 @@ std::vector<int> sub2Vectors(const std::vector<int>& v1, const std::vector<int>&
 // zeroindices - list of all sums that give zero
 // pricesum
 
-void f(LinkedList &LL, int n, std::vector<int> &arrind, std::vector<int> &sumvec, LinkedList &zeroindices, int pricesum){
+void f(LinkedList3 &LL, int n, std::vector<int> &arrind, std::vector<int> &sumvec, LinkedList3 &zeroindices, int pricesum){
     if ( n==0 ){
         if(compareVectors(sumvec,zerovec)){
             if(pricesum > 0){
@@ -131,7 +132,7 @@ void f(LinkedList &LL, int n, std::vector<int> &arrind, std::vector<int> &sumvec
 }
 
 // zero indeces will have invalid entries of price, mode and stuffs.
-void g(LinkedList &zeroindeces, LinkedList &input_lines){
+void g(LinkedList3 &zeroindeces, LinkedList3 &input_lines){
     //std::cout<<"inside";
     // std::vector<int> profit[zeroindeces.getSize()];
     if(zeroindeces.getSize()==0){
@@ -159,8 +160,7 @@ void g(LinkedList &zeroindeces, LinkedList &input_lines){
     for(int i = 0; i < zeroindeces.getNodeByIndex(maxindex_zeroindeces)->data.size(); ++i){ // coming in ascending order
         input_lines.deleteVectorByIndex(zeroindeces.getNodeByIndex(maxindex_zeroindeces)->data[i]);
     }
-    std::cout<<maxprofit<<"\r"<<std::endl;
-    
+    g_profit += maxprofit;    
 }
 
 int main() {
@@ -241,8 +241,20 @@ int main() {
             else if(mode_str == "b"){mode = 'b';}
             else{break;}
 
-            // price is 2nd last element
-            std::string price_str = linelst[linelst.size() - 2];
+            // Quantity is 2rd last element
+            std::string quant_str = linelst[linelst.size() - 2];
+            int quant;
+            quant = stoi(quant_str);
+            try{
+                quant = stoi(quant_str);
+            }
+            catch (const std::invalid_argument& e){
+                std::cerr << "Invalid argument quant: " << quant_str << std::endl;
+                quant = 0;
+            }
+
+            // price is 3rd last element
+            std::string price_str = linelst[linelst.size() - 3];
             int price;
             try{
                 if(mode=='b')price = stoi(price_str);
@@ -255,6 +267,7 @@ int main() {
 
             // actual working 
             linelst.pop_back(); // popping b/s
+            linelst.pop_back(); // popping quant
             linelst.pop_back(); // popping price
 
             // process through the input vector
@@ -286,26 +299,51 @@ int main() {
             }
 
             //CANCELLATION LAWS
-            bool flag1=false;
+            int flag2=0; // tells if cancellation happens or not.
             for(int i=0;i < input_lines.getSize(); ++i){
                 if(compareVectors(input_lines.getNodeByIndex(i)->data, append_vector)){
-                    if(mode != input_lines.getNodeByIndex(i)->mode){
-                        input_lines.deleteVectorByIndex(i);
-                        flag1=true;
-                        break;
-                    }
-                    else{
-                        if(input_lines.getNodeByIndex(i)->price < price){
-                            input_lines.getNodeByIndex(i)->price = price;
-                            flag1=true;
+                    if(mode != input_lines.getNodeByIndex(i)->mode && price == input_lines.getNodeByIndex(i)->price){
+                        if(quant < input_lines.getNodeByIndex(i)->quantity){
+                            Node3* temp = input_lines.getNodeByIndex(i);
+                            temp->quantity = input_lines.getNodeByIndex(i)->quantity - quant;
+                            //INPUT LINE HAS TO CHANGE HERE WRITE THAT CODE BELOW
+                            //------------------->
+                            flag2=1;
+                            break;
+
+                        }
+                        else if(quant == input_lines.getNodeByIndex(i)->quantity){ // same quant means total cancellation
+                            input_lines.deleteVectorByIndex(i);
+                            flag2=1;
+                            break;
+                        }
+                        else{// quant > input_lines.getNodeByIndex(i)->quantity
+                            quant = quant - input_lines.getNodeByIndex(i)->quantity;
+                            input_lines.deleteVectorByIndex(i);
+                            flag2=0;
                             break;
                         }
                     }
+                    // else{
+                    //     if(input_lines.getNodeByIndex(i)->price < price){
+                    //         Node3* temp = input_lines.getNodeByIndex(i);
+                    //         temp->price = price;
+                    //         temp->inpline = line;
+                    //         temp->mode = mode;
+                    //         flag2=true;
+                    //         break;
+                    //     }
+                    // }
                 }
             }
-            if(flag1==false){input_lines.addVector(append_vector, price, line, mode);}
+            if(flag2==0){
+                input_lines.addVector(append_vector, price, line, mode, quant);
+            }
+            else if(flag2==1){std::cout<<notrade<<"\r"<<std::endl;continue;}
 
-            LinkedList zeroindices;
+            // std::cout<<"summa";
+            // algo
+            LinkedList3 zeroindices;
             std::vector<int> sumvec(vector_size,0);
             std::vector<int> arrind;
             int n = input_lines.getSize();
@@ -314,6 +352,17 @@ int main() {
             //std::cout<<input_lines.getSize()<<"\n";
             g(zeroindices,input_lines);
             //std::cout<<"after";
+            // std::cerr<<input_lines.getSize();
+            // //TEMPORARY: checking if f works
+            // std::cout<<zeroindices.getSize();
+            // for (int i=0;i < zeroindices.getSize(); ++i){
+            //     for (const auto& word : zeroindices.getNodeByIndex(i)->data) {
+            //         std::cout << "\"" << word << "\"";
+            //     }
+            //     std::cout<<std::endl;
+            // }
+            
+            
 
             // ________________________________________
             // out+=  "\n";
@@ -334,6 +383,7 @@ int main() {
 
 // _________________________________________________________
     // std::cout<< out;
+    std::cout<<g_profit<<"\r"<<std::endl;
     rcv.terminate();
     return 0;
 }

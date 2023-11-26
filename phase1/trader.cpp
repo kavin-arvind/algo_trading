@@ -447,7 +447,7 @@ int main(int argc, char **argv){
                     bool flag1=false; // tells if cancellation happens or not.
                     for(int i=0;i < input_lines.getSize(); ++i){
                         if(compareVectors(input_lines.getNodeByIndex(i)->data, append_vector)){
-                            if(mode != input_lines.getNodeByIndex(i)->mode){
+                            if(mode != input_lines.getNodeByIndex(i)->mode && price == input_lines.getNodeByIndex(i)->price){
                                 input_lines.deleteVectorByIndex(i);
                                 flag1=true;
                                 break;
