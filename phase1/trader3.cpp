@@ -3,9 +3,7 @@
 // #include <map>
 #include "map.h"
 #include "linked_list_3.h"
-#define vector_size 5
 std::string notrade = "No trade";
-std::vector<int> zerovec(vector_size, 0);
 char newline = '\n';
 std::string str_newline = "\n";
 int g_profit = 0;
@@ -15,7 +13,7 @@ int g_profit = 0;
 AVLMap stock_index; // from stock to index of it in the array
 // AVLMap stocks; // {stock_name, predicted value} 
 LinkedList3 input_lines; // llist of inputted lines
-
+std::vector<int> zerovec(stock_index.getSize(), 0);
 
 //AVLMap b_best; // {stock_name, predicted value} stores best price of a stock bought ever
 //AVLMap s_best; // {stock_name, predicted value} stores best price of a stock bought ever
@@ -336,8 +334,8 @@ int main() {
             linelst.pop_back(); // popping price
 
             // process through the input vector
-            std::vector<int> append_vector(vector_size,0);
-            // for(int i=0;i<vector_size;++i){ //initialize to 0
+            std::vector<int> append_vector(stock_index.getSize(),0);
+            // for(int i=0;i<stock_index.getSize();++i){ //initialize to 0
             //     append_vector[i]=0;
             // }
             for (int i=0; i < linelst.size(); i=i+2){
@@ -348,7 +346,12 @@ int main() {
                     else{
                         int sz = stock_index.getSize();
                         stock_index.insert(linelst[i],sz);
-                        append_vector[sz] = stoi(linelst[i+1]);
+                        //append_vector[sz] = stoi(linelst[i+1]);
+                        append_vector.push_back(stoi(linelst[i+1]));
+                        for(int j=0;j<input_lines.getSize();j++){
+                            input_lines.getNodeByIndex(j)->data.push_back(0);
+                        }
+                        zerovec.push_back(0);
                     }
                 }
                 else if(mode=='s'){// take negative of everything
@@ -358,7 +361,12 @@ int main() {
                     else{
                         int sz = stock_index.getSize();
                         stock_index.insert(linelst[i],sz);
-                        append_vector[sz] = (-1)*stoi(linelst[i+1]);
+                        //append_vector[sz] = (-1)*stoi(linelst[i+1]);
+                        append_vector.push_back((-1)*stoi(linelst[i+1]));
+                        for(int j=0;j<input_lines.getSize();j++){
+                            input_lines.getNodeByIndex(j)->data.push_back(0);
+                        }
+                        zerovec.push_back(0);
                     }
                 }
             }
@@ -413,7 +421,7 @@ int main() {
             // algo
             LinkedList3 zeroindices;
             LinkedList3 zeroquants;
-            std::vector<int> sumvec(vector_size,0);
+            std::vector<int> sumvec(stock_index.getSize(),0);
             std::vector<int> arrind;
             std::vector<int> arrquant;
             std::vector<int> arrprices;
@@ -422,10 +430,11 @@ int main() {
             int pricesum = 0;
             f(input_lines, n, arrind, sumvec, zeroindices, zeroquants, arrprices, arrquant, arrvec);
             //std::cout<<input_lines.getSize()<<"\n";
-            std::cout<<std::endl;zeroindices.printListInOrder();std::cout<<std::endl;
-
+            // std::cout<<std::endl;zeroindices.printListInOrder();std::cout<<std::endl;
+        
             g(zeroindices, zeroquants, input_lines);
 
+            input_lines.printListInOrder();
             //std::cout<<"after";
             // std::cerr<<input_lines.getSize();
             // //TEMPORARY: checking if f works

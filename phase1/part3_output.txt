@@ -1,15 +1,18 @@
 Receiver is listening on port 8888
-
-0 (Price: 10, Inpline: a, Mode: n, Quantity: 1) -> nullptr
-
 X 1 Y -1 10 1 s#
-
 nullptr
-
 No trade
-
-1 0 (Price: 10, Inpline: a, Mode: n, Quantity: 1) -> 1 (Price: 10, Inpline: a, Mode: n, Quantity: 1) -> nullptr
-
+0 0 0 (Price: -15, Inpline: Z -1 Y 1 -15 1 b, Mode: b, Quantity: 1) -> nullptr
 Z -1 Y 1 -15 0 s#
 Z 1 X -1 10 1 s#
-20
+0 0 0 (Price: -15, Inpline: Z -1 Y 1 -15 1 b, Mode: b, Quantity: 1) -> nullptr
+Z -1 Y 1 -15 0 s#
+t 1 u -1 10 1 s#
+0 0 0 0 0 (Price: -15, Inpline: Z -1 Y 1 -15 1 b, Mode: b, Quantity: 1) -> nullptr
+Z -1 Y 1 -15 0 s#
+t 1 X -1 10 1 s#
+0 0 0 0 0 (Price: -15, Inpline: Z -1 Y 1 -15 1 b, Mode: b, Quantity: 1) -> nullptr
+Z -1 Y 1 -15 0 s#
+Z 1 v -1 10 1 s#
+0 0 0 0 0 0 (Price: -15, Inpline: Z -1 Y 1 -15 1 b, Mode: b, Quantity: 1) -> nullptr
+50

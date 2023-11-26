@@ -35,7 +35,7 @@ runpart2: iml trader
 runpart2_own: iml trader
 	./trader 2 > part2_output.txt &
 	sleep 1
-	./iml part2_testcases/input.txt
+	./iml part2_testcases/input2.txt
 
 
 runpart3: iml trader
