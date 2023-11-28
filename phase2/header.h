@@ -37,6 +37,7 @@ private:
     Node* minValueNode(Node* node);
     Node* deleteNode(Node* root, const std::string& key);
     Node* find(Node* node, const std::string& key);
+    void inorderTraversal(Node* node);
 
 public:
     AVLMap();
@@ -46,7 +47,25 @@ public:
     void remove(const std::string& key);
     bool containsKey(const std::string& key);
     std::vector<int> getValue(const std::string& key);
+    void inorderTraversal();
 };
+
+void AVLMap::inorderTraversal() {
+    inorderTraversal(root);
+}
+
+void AVLMap::inorderTraversal(Node* node) {
+    if (node != nullptr) {
+        inorderTraversal(node->left);
+        // Process the node here (e.g., print or manipulate data)
+        std::cout << "Key: " << node->key << ", Value: [";
+        for (const auto& val : node->value) {
+            std::cout << val << " ";
+        }
+        std::cout << "]" << std::endl;
+        inorderTraversal(node->right);
+    }
+}
 
 // Constructor
 AVLMap::AVLMap() : root(nullptr) {}
