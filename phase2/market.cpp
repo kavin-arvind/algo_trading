@@ -4,7 +4,10 @@
 AVLMap EOD; //{company_name, [profit,bought,sold]}
 AVLMap2 stock_b; //{stock,<heap of BUY quotes>}
 AVLMap2 stock_s; //{stock,<heap of BUY quotes>}
-int i=0;
+
+int money_transfered = 0;
+int no_of_trades = 0;
+int no_of_shares_traded = 0;
 
 market::market(int argc, char** argv)
 {
@@ -39,7 +42,7 @@ void market::start()
         //Node* a = &f;
 
         if(a!=nullptr){
-            //std::cout<<a->broker<<"*"<<a->exptime<<"*"<<a->mode<<"*"<<a->price<<"*"<<a->quantity<<"*"<<a->stock<<"*"<<a->timestamp<<std::endl;
+            //std::cout<<a->broker<<""<<a->exptime<<""<<a->mode<<""<<a->price<<""<<a->quantity<<""<<a->stock<<""<<a->timestamp<<std::endl;
 
             std::string ouT = "";
 
@@ -56,11 +59,25 @@ void market::start()
 
                     if(top_node != nullptr && (-1)*top_node->price >= a->price && top_node->quantity < a->quantity){
                         while(top_node != nullptr && (-1)*top_node->price >= a->price && top_node->quantity < a->quantity){
+
+                            bool flagk=true;
+
+                            while(top_node != nullptr && a->timestamp > top_node->exptime){
+                                flagk = false;
+                                b_heap->extractMin(); // simply delete top node
+                                top_node = b_heap->getTop();
+                            }
+
+                            if(flagk == false){continue;}
+                            
                             a->quantity -= top_node->quantity;
 
                             // output line processing WITHOUT NEWLINE
                             ouT = top_node->broker + " purchased " + std::to_string(top_node->quantity) + " share of " + a->stock + " from " + a->broker + " for $" + std::to_string((-1)*top_node->price) + "/share" ;
                             std::cout<<ouT<<std::endl;
+                            money_transfered+= (-1)*top_node->price*top_node->quantity;
+                            no_of_shares_traded+= top_node->quantity;
+                            no_of_trades +=1;
 
                             // EOD processing
                             // for a which is SELL 
@@ -99,12 +116,21 @@ void market::start()
                         } 
                     }
 
+                    while(top_node != nullptr && a->timestamp > top_node->exptime){
+                        b_heap->extractMin(); // simply delete top node
+                        top_node = b_heap->getTop();
+                    }
+
                     if(top_node != nullptr && (-1)*top_node->price >= a->price && a->quantity > 0 && top_node->quantity >= a->quantity){
+                                                        
                             top_node->quantity -= a->quantity; 
                             
                             // output line processing WITHOUT NEWLINE
                             ouT = top_node->broker + " purchased " + std::to_string(a->quantity) + " share of " + a->stock + " from " + a->broker + " for $" + std::to_string((-1)*top_node->price) + "/share" ;
                             std::cout<<ouT<<std::endl;
+                            money_transfered+= (-1)*top_node->price*a->quantity;
+                            no_of_shares_traded+= a->quantity;
+                            no_of_trades +=1;
 
                             // EOD processing
                             // for a which is SELL
@@ -173,31 +199,37 @@ void market::start()
             }
 
             else if (a->mode=='b'){
-                std::cerr<< "inside b"<<a->broker <<std::endl;
-                std::cerr<< a->stock<< std::endl;
                 if(stock_s.containsKey(a->stock)){ // check if it is present in SELL mode
-                    std::cerr<< "inside b if 1"<< std::endl;
                     Heap* s_heap = stock_s.getValue(a->stock);
                     Node* top_node = s_heap->peek();
-                    
-                    std::cerr<<"uh"<< a->timestamp<<std::endl;
-                    if (top_node!=nullptr)std::cerr<<"ok"<< top_node<< std::endl;
 
                     while(top_node != nullptr && a->timestamp > top_node->exptime){
-                        std::cerr<<"exp "<<a->stock<< std::endl;
+                        //std::cerr<<"exp "<<a->stock<< std::endl;
                         s_heap->extractMin(); // simply delete top node
                         top_node = s_heap->getTop();
                     }
-                    std::cerr<< a->stock<< std::endl;
+                    //std::cerr<< a->stock<< std::endl;
 
 
                     if(top_node != nullptr && (-1)*a->price >= top_node->price && top_node->quantity < a->quantity){
                         while(top_node != nullptr && (-1)*a->price >= top_node->price && top_node->quantity < a->quantity){
+                            bool flagn=true;
+                            while(top_node != nullptr && a->timestamp > top_node->exptime){
+                                flagn = false;
+                                s_heap->extractMin(); // simply delete top node
+                                top_node = s_heap->getTop();
+                            }
+
+                            if(flagn == false){continue;}
+                            
                             a->quantity -= top_node->quantity;
 
                             // output line processing WITHOUT NEWLINE
                             ouT = a->broker + " purchased " + std::to_string(top_node->quantity) + " share of " + a->stock + " from " + top_node->broker + " for $" + std::to_string(top_node->price) + "/share" ;
                             std::cout<<ouT<<std::endl;
+                            money_transfered+= top_node->price*top_node->quantity;
+                            no_of_shares_traded+= top_node->quantity;
+                            no_of_trades +=1;
 
                             // EOD processing
                             // for a which is BUY 
@@ -236,12 +268,23 @@ void market::start()
                         } 
                     }
 
+                    while(top_node != nullptr && a->timestamp > top_node->exptime){
+                        s_heap->extractMin(); // simply delete top node
+                        top_node = s_heap->getTop();
+                    }
+
                     if(top_node != nullptr && (-1)*a->price >= top_node->price && a->quantity > 0 && top_node->quantity >= a->quantity){
+                            
                             top_node->quantity -= a->quantity; 
                             
                             // output line processing WITHOUT NEWLINE
                             ouT = a->broker + " purchased " + std::to_string(a->quantity) + " share of " + a->stock + " from " + top_node->broker + " for $" + std::to_string(top_node->price) + "/share" ;
                             std::cout<<ouT<<std::endl;
+                            money_transfered+= top_node->price*a->quantity;
+                            no_of_shares_traded+= a->quantity;
+                            no_of_trades +=1;
+
+
                             // EOD processing
                             // for a which is BUY
                             if(EOD.containsKey(a->broker)){
@@ -294,18 +337,12 @@ void market::start()
 
                 }
                 else{
-                    std::cerr<< "inside b else 1"<< std::endl;
-                    std::cerr<< a->stock<< std::endl;
                     if((stock_b.containsKey(a->stock))){// check if it is present in BUY mode
-                        std::cerr<< "inside b else 1 if 2"<< std::endl;
                         Heap* b_heap = stock_b.getValue(a->stock);
-                        std::cerr<< "c1"<< std::endl;
                         b_heap->insert(a);
-                        std::cerr<< "c2"<< std::endl;
            
                     }
                     else{
-                        std::cerr<< "inside b else 1 else 2"<< std::endl;
                         // Heap emptyheap;
                         // Heap* b_heap = &emptyheap;
                         Heap* b_heap = new Heap;
@@ -315,10 +352,10 @@ void market::start()
                 }
             }
 
-            std::cerr<<ouT<<++i<<std::endl;
         }
                 //delete a;
     }
+    printing_end_stuffs(money_transfered , no_of_trades , no_of_shares_traded);
     EOD.inorderTraversal();
     
 }

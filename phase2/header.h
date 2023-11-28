@@ -3,6 +3,7 @@
 #include <string>
 #include <vector>
 
+#define int_max 2147483647
 // AVLMap.h
 #ifndef AVLMAP_H
 #define AVLMAP_H
@@ -58,11 +59,8 @@ void AVLMap::inorderTraversal(Node* node) {
     if (node != nullptr) {
         inorderTraversal(node->left);
         // Process the node here (e.g., print or manipulate data)
-        std::cout << "Key: " << node->key << ", Value: [";
-        for (const auto& val : node->value) {
-            std::cout << val << " ";
-        }
-        std::cout << "]" << std::endl;
+        std::cout << node->key << " bought "<< node->value[1] << " and sold "<<node->value[2] << " for a net transfer of $"<< node->value[0]<<std::endl;
+
         inorderTraversal(node->right);
     }
 }
@@ -359,17 +357,11 @@ Heap::~Heap() {
 
 void Heap::heapifyUp(int index) {
     int parent = (index - 1) / 2;
-    std::cerr<<"ind"<<index<<std::endl;
     while (index > 0 && compareNodes(heap[index], heap[parent])) {
-        std::cerr<<"h2"<<std::endl;
-        //std::swap(heap[index], heap[parent]);
-        std::cerr<<"h3"<<std::endl;
+        std::swap(heap[index], heap[parent]);
         index = parent;
-        std::cerr<<"h4"<<std::endl;
         parent = (index - 1) / 2;
-        std::cerr<<"h5"<<std::endl;
     }
-    std::cerr<<"h0"<<std::endl;
 }
 
 void Heap::heapifyDown(int index) {
@@ -393,11 +385,8 @@ void Heap::heapifyDown(int index) {
 
 bool Heap::compareNodes(Node* a, Node* b) {
     // Compare based on minimum price, then minimum timestamp, and finally alphabetical order of broker
-    std::cerr<<"cn"<<std::endl;
-    std::cerr<<"a price:"<<a<<std::endl;
     // if(a->price){std::cerr<<"q1"<<std::endl;}
     // else if(b->price){std::cerr<<"q2"<<std::endl;}
-    std::cerr<<"cn2"<<std::endl;
     if (a->price != b->price) {
         return a->price < b->price;
     } else if (a->timestamp != b->timestamp) {
@@ -408,13 +397,7 @@ bool Heap::compareNodes(Node* a, Node* b) {
 }
 
 void Heap::insert(Node* node) {
-    std::cerr<<node->price<<std::endl;
     heap.push_back(node);
-    std::cerr<<node->price<<std::endl;
-    std::cerr<<"hmm"<<std::endl;
-    std::cerr<<heap.size()<<std::endl;
-    std::cerr<<heap[0]<<std::endl;
-    std::cerr<<'0'<<std::endl;
     heapifyUp(heap.size() - 1);
 }
 
@@ -811,7 +794,7 @@ Node* line_process_to_node(std::string line, bool &valid){
     if(valid_for_substr(line,index+1, index_prev - index - 1)){
         try{
             int temp = std::stoi(line.substr(index+1,index_prev - index - 1));
-            if(temp == -1){inp->exptime = -1;}
+            if(temp == -1){inp->exptime = int_max;}
             else{inp->exptime += temp;}
         }
         catch (const std::invalid_argument& e){
@@ -869,4 +852,12 @@ Node* line_process_to_node(std::string line, bool &valid){
 
     return inp;
 
+}
+
+void printing_end_stuffs(int money_transfered, int no_of_trades, int no_of_shares_traded){
+    std::cout<<std::endl;
+    std::cout<<"---End of Day---"<<std::endl;
+    std::cout<<"Total Amount of Money Transferred: $" << money_transfered<<std::endl;
+    std::cout<<"Number of Completed Trades: "<< no_of_trades <<std::endl;
+    std::cout<<"Number of Shares Traded: "<< no_of_shares_traded <<std::endl;
 }
