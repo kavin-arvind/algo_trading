@@ -37,6 +37,7 @@ public:
     void insert(Node* node);
     Node* extractMin();
     Node* peek();
+    Node* getTop();
     bool isEmpty();
     int size();
 };
@@ -109,6 +110,10 @@ Node* Heap::extractMin() {
 }
 
 Node* Heap::peek() {
+    return isEmpty() ? nullptr : heap[0];
+}
+
+Node* Heap::getTop() {
     return isEmpty() ? nullptr : heap[0];
 }
 

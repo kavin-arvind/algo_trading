@@ -15,13 +15,13 @@ class AVLMap2 {
 private:
     struct Node {
         std::string key;
-        Heap value; // Assuming Heap is a class you have defined
+        Heap* valuePointer; // Change Heap to Heap*
         Node* left;
         Node* right;
         int height;
 
-        Node(const std::string& k, const Heap& v)
-            : key(k), value(v), left(nullptr), right(nullptr), height(1) {}
+        Node(const std::string& k, Heap* v)
+            : key(k), valuePointer(v), left(nullptr), right(nullptr), height(1) {}
     };
 
     Node* root;
@@ -32,7 +32,7 @@ private:
     Node* leftRotate(Node* x);
     Node* leftRightRotate(Node* x);
     Node* rightLeftRotate(Node* y);
-    Node* insert(Node* node, const std::string& key, const Heap& value);
+    Node* insert(Node* node, const std::string& key, Heap* valuePointer);
     Node* minValueNode(Node* node);
     Node* deleteNode(Node* root, const std::string& key);
     Node* find(Node* node, const std::string& key);
@@ -41,10 +41,10 @@ public:
     AVLMap2();
     ~AVLMap2();
 
-    void insert(const std::string& key, const Heap& value);
+    void insert(const std::string& key, Heap* valuePointer);
     void remove(const std::string& key);
     bool containsKey(const std::string& key);
-    Heap getValue(const std::string& key);
+    Heap* getValue(const std::string& key);
 };
 
 // Constructor
@@ -116,20 +116,20 @@ AVLMap2::Node* AVLMap2::rightLeftRotate(Node* y) {
 }
 
 // Helper function to insert a key-value pair into the AVLMap
-AVLMap2::Node* AVLMap2::insert(Node* node, const std::string& key, const Heap& value) {
+AVLMap2::Node* AVLMap2::insert(Node* node, const std::string& key, Heap* valuePointer) {
     // Base case
     if (node == nullptr) {
-        return new Node(key, value);
+        return new Node(key, valuePointer);
     }
 
     // Insert the node
     if (key < node->key) {
-        node->left = insert(node->left, key, value);
+        node->left = insert(node->left, key, valuePointer);
     } else if (key > node->key) {
-        node->right = insert(node->right, key, value);
+        node->right = insert(node->right, key, valuePointer);
     } else {
-        // Key already exists, update the value
-        node->value = value;
+        // Key already exists, update the valuePointer
+        node->valuePointer = valuePointer;
         return node;
     }
 
@@ -200,7 +200,7 @@ AVLMap2::Node* AVLMap2::deleteNode(Node* root, const std::string& key) {
 
             // Copy the inorder successor's data to this node
             root->key = temp->key;
-            root->value = temp->value;
+            root->valuePointer = temp->valuePointer;
 
             // Delete the inorder successor
             root->right = deleteNode(root->right, temp->key);
@@ -254,8 +254,8 @@ AVLMap2::Node* AVLMap2::find(Node* node, const std::string& key) {
 }
 
 // Function to insert a key-value pair into the AVLMap
-void AVLMap2::insert(const std::string& key, const Heap& value) {
-    root = insert(root, key, value);
+void AVLMap2::insert(const std::string& key, Heap* valuePointer) {
+    root = insert(root, key, valuePointer);
 }
 
 // Function to remove a key and its associated value from the AVLMap
@@ -269,13 +269,13 @@ bool AVLMap2::containsKey(const std::string& key) {
 }
 
 // Function to get the value associated with a key in the AVLMap
-Heap AVLMap2::getValue(const std::string& key) {
+Heap* AVLMap2::getValue(const std::string& key) {
     Node* node = find(root, key);
     if (node != nullptr) {
-        return node->value;
+        return node->valuePointer;
     } else {
-        // Return a default-constructed Heap if the key is not found
-        return Heap(); // Assuming Heap has a default constructor
+        // Return nullptr if the key is not found
+        return nullptr;
     }
 }
 
