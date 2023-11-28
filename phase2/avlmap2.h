@@ -6,10 +6,10 @@
 #include <vector>
 #include "Heap.h" // Assuming you have a Heap class
 
-template <typename T>
-const T& customMax(const T& a, const T& b) {
-    return (a > b) ? a : b;
-}
+// template <typename T>
+// const T& customMax(const T& a, const T& b) {
+//     return (a > b) ? a : b;
+// }
 
 class AVLMap2 {
 private:

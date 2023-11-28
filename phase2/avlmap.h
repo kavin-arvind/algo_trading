@@ -62,6 +62,10 @@ int AVLMap::height(Node* node) {
     return node->height;
 }
 
+void AVLMap::insert(const std::string& key, const std::vector<int>& value) {
+    root = insert(root , key, value);
+}
+
 // Helper function to calculate the balance factor of a node
 int AVLMap::balanceFactor(Node* node) {
     if (node == nullptr) {

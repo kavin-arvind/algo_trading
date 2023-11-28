@@ -16,7 +16,7 @@ public:
     int quantity;
     int price;
 
-    Node(std::string b, std::string s, int ts, int et, char m, int q, int p)
+    Node(std::string b = "", std::string s = "", int ts = 0, int et = 0, char m = 'n', int q = 0, int p = 0)
         : broker(b), stock(s), timestamp(ts), exptime(et), mode(m), quantity(q), price(p) {}
 
     // Assuming a proper copy constructor if needed

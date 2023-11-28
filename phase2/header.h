@@ -2,18 +2,18 @@
 #include <fstream>
 #include <string>
 
-struct Node {
-    std::string broker;
-    std::string stock;
-    int timestamp;
-    int exptime;
-    char mode;
-    int quantity;
-    int price;
+// struct Node {
+//     std::string broker;
+//     std::string stock;
+//     int timestamp;
+//     int exptime;
+//     char mode;
+//     int quantity;
+//     int price;
 
-    Node(std::string b = "", std::string s = "", int ts = 0, int et = 0, char m = 'n', int q = 0, int p = 0)
-        : broker(b), stock(s), timestamp(ts), exptime(et), mode(m), quantity(q), price(p) {}
-};
+//     Node(std::string b = "", std::string s = "", int ts = 0, int et = 0, char m = 'n', int q = 0, int p = 0)
+//         : broker(b), stock(s), timestamp(ts), exptime(et), mode(m), quantity(q), price(p) {}
+// };
 
 bool valid_for_substr(std::string str, int startPos, int length){
     if (startPos < str.size() && 0<=length && length <= str.size()-startPos) {
@@ -137,6 +137,10 @@ Node* line_process_to_node(std::string line, bool &valid){
     }
     else{
         valid = false; return inp;
+    }
+
+    if(inp->mode == 'b'){
+        inp->price = (-1)*inp->price;
     }
 
     return inp;
