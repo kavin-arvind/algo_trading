@@ -2,9 +2,6 @@
 #ifndef AVLMAP_H
 #define AVLMAP_H
 
-#include <iostream>
-#include <vector>
-
 template <typename T>
 const T& customMax(const T& a, const T& b) {
     return (a > b) ? a : b;

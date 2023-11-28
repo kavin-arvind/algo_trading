@@ -3,8 +3,6 @@
 #ifndef NODE_AND_HEAP_H
 #define NODE_AND_HEAP_H
 
-#include <iostream>
-#include <vector>
 
 class Node {
 public:

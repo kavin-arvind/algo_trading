@@ -1,0 +1,9 @@
+AVLMap Test:
+AAPL value: 1 2 3 
+GOOGL value: 4 5 6 
+AAPL present: false
+
+AVLMap2 Test:
+AAPL value: Broker: AAPL, Price: 100
+GOOGL value: Broker: GOOGL, Price: 200
+AAPL present: false
