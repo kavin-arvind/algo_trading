@@ -17,3 +17,7 @@ trader: main.cpp market.cpp worker.cpp trader.cpp
 clean:
 	rm -rf market trader output.txt
 	rm -rf *~
+
+test: test.cpp
+	g++ -std=c++20 test.cpp -o test
+	./test > test_output.txt

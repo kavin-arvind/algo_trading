@@ -1,6 +1,4 @@
 #include "market.h"
-#include "avlmap.h"
-#include "avlmap2.h"
 #include "header.h"
 
 AVLMap EOD; //{company_name, [profit,bought,sold]}
