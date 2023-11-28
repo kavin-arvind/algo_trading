@@ -292,8 +292,8 @@ std::vector<int> AVLMap::getValue(const std::string& key) {
 #define NODE_AND_HEAP_H
 
 
-class Node {
-public:
+struct Node {
+//public:
     std::string broker;
     std::string stock;
     int timestamp;
@@ -340,11 +340,17 @@ Heap::~Heap() {
 
 void Heap::heapifyUp(int index) {
     int parent = (index - 1) / 2;
+    std::cerr<<"ind"<<index<<std::endl;
     while (index > 0 && compareNodes(heap[index], heap[parent])) {
-        std::swap(heap[index], heap[parent]);
+        std::cerr<<"h2"<<std::endl;
+        //std::swap(heap[index], heap[parent]);
+        std::cerr<<"h3"<<std::endl;
         index = parent;
+        std::cerr<<"h4"<<std::endl;
         parent = (index - 1) / 2;
+        std::cerr<<"h5"<<std::endl;
     }
+    std::cerr<<"h0"<<std::endl;
 }
 
 void Heap::heapifyDown(int index) {
@@ -368,6 +374,11 @@ void Heap::heapifyDown(int index) {
 
 bool Heap::compareNodes(Node* a, Node* b) {
     // Compare based on minimum price, then minimum timestamp, and finally alphabetical order of broker
+    std::cerr<<"cn"<<std::endl;
+    std::cerr<<"a price:"<<a<<std::endl;
+    // if(a->price){std::cerr<<"q1"<<std::endl;}
+    // else if(b->price){std::cerr<<"q2"<<std::endl;}
+    std::cerr<<"cn2"<<std::endl;
     if (a->price != b->price) {
         return a->price < b->price;
     } else if (a->timestamp != b->timestamp) {
@@ -378,7 +389,13 @@ bool Heap::compareNodes(Node* a, Node* b) {
 }
 
 void Heap::insert(Node* node) {
+    std::cerr<<node->price<<std::endl;
     heap.push_back(node);
+    std::cerr<<node->price<<std::endl;
+    std::cerr<<"hmm"<<std::endl;
+    std::cerr<<heap.size()<<std::endl;
+    std::cerr<<heap[0]<<std::endl;
+    std::cerr<<'0'<<std::endl;
     heapifyUp(heap.size() - 1);
 }
 

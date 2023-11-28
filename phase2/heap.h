@@ -4,8 +4,8 @@
 #define NODE_AND_HEAP_H
 
 
-class Node {
-public:
+struct Node {
+//public:
     std::string broker;
     std::string stock;
     int timestamp;

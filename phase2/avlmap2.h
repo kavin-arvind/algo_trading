@@ -2,11 +2,6 @@
 #ifndef AVLMAP2_H
 #define AVLMAP2_H
 
-<<<<<<< HEAD
-#include <iostream>
-#include <vector>
-#include "heap.h" // Assuming you have a Heap class
-=======
 // NodeAndHeap.h
 
 #ifndef NODE_AND_HEAP_H
@@ -134,7 +129,6 @@ int Heap::size() {
 
 #endif  // NODE_AND_HEAP_H
 
->>>>>>> 8625476d9d7fea45e62211ad12482b63ca2184fe
 
 // template <typename T>
 // const T& customMax(const T& a, const T& b) {
