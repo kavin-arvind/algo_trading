@@ -4,7 +4,7 @@
 
 #include <iostream>
 #include <vector>
-#include "Heap.h" // Assuming you have a Heap class
+#include "heap.h" // Assuming you have a Heap class
 
 // template <typename T>
 // const T& customMax(const T& a, const T& b) {

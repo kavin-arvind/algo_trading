@@ -32,7 +32,123 @@ void market::start()
             std::string ouT = "";
 
             // NODE pointer 'a' has the node we need to process right?
-            if (a->mode=='b'){
+            if (a->mode =='s'){
+                if(stock_b.containsKey(a->stock)){ // check if it is present in BUY mode
+                    Heap* b_heap = stock_b.getValue(a->stock);
+                    Node* top_node = b_heap->getTop();
+
+                    while(top_node != nullptr && a->timestamp > top_node->exptime){
+                        b_heap->extractMin(); // simply delete top node
+                        top_node = b_heap->getTop();
+                    }
+
+                    if(top_node != nullptr && (-1)*top_node->price >= a->price && top_node->quantity < a->quantity){
+                        while(top_node->quantity < a->quantity){
+                            a->quantity -= top_node->quantity;
+
+                            // output line processing WITHOUT NEWLINE
+                            ouT = top_node->broker + " purchased " + std::to_string(top_node->quantity) + " share of " + a->stock + " from " + a->broker + " for $" + std::to_string(top_node->price) + "/share" ;
+
+                            // EOD processing
+                            // for a which is SELL 
+                            if(EOD.containsKey(a->broker)){
+                                //std::vector<int>& temp1 = EOD.getValue(a->broker);
+                                EOD.getValue(a->broker)[0] += (-1)*top_node->price;
+                                EOD.getValue(a->broker)[2] += top_node->quantity;
+                            }
+                            else{
+                                std::vector<int> temp1(3,0);
+                                temp1[0] += (-1)*top_node->price;
+                                temp1[2] += top_node->quantity;
+                                EOD.insert(a->broker,temp1);
+                            }
+                            // for top_node which is BUY
+                            if(EOD.containsKey(top_node->broker)){
+                                //std::vector<int>& temp1 = EOD.getValue(top_node->broker);
+                                EOD.getValue(top_node->broker)[0] += top_node->price;
+                                EOD.getValue(top_node->broker)[1] += top_node->quantity;
+                            }
+                            else{
+                                std::vector<int> temp1(3,0);
+                                temp1[0] += top_node->price;
+                                temp1[1] += top_node->quantity;
+                                EOD.insert(top_node->broker,temp1);
+                            }
+
+                            // remove top node obviously
+                            b_heap->extractMin();
+
+                            top_node = b_heap->getTop();
+                        } 
+                    }
+
+                    if(top_node != nullptr && (-1)*top_node->price >= a->price && a->quantity > 0 && top_node->quantity >= a->quantity){
+                            top_node->quantity -= a->quantity; 
+                            
+                            // output line processing WITHOUT NEWLINE
+                            ouT = top_node->broker + " purchased " + std::to_string(a->quantity) + " share of " + a->stock + " from " + a->broker + " for $" + std::to_string(top_node->price) + "/share" ;
+
+                            // EOD processing
+                            // for a which is SELL
+                            if(EOD.containsKey(a->broker)){
+                                //std::vector<int>& temp1 = EOD.getValue(a->broker);
+                                EOD.getValue(a->broker)[0] += (-1)*top_node->price;
+                                EOD.getValue(a->broker)[2] += a->quantity;
+                            }
+                            else{
+                                std::vector<int> temp1(3,0);
+                                temp1[0] += (-1)*top_node->price;
+                                temp1[2] += a->quantity;
+                                EOD.insert(a->broker,temp1);
+                            }
+                            // for top_node which is BUY
+                            if(EOD.containsKey(top_node->broker)){
+                                //std::vector<int>& temp1 = EOD.getValue(top_node->broker);
+                                EOD.getValue(top_node->broker)[0] += top_node->price;
+                                EOD.getValue(top_node->broker)[1] += a->quantity;
+                            }
+                            else{
+                                std::vector<int> temp1(3,0);
+                                temp1[0] += top_node->price;
+                                temp1[1] += a->quantity;
+                                EOD.insert(top_node->broker,temp1);
+                            }
+
+                            if(top_node->quantity == 0){
+                                b_heap->extractMin(); // simply delete top node
+                            }
+                        }
+
+
+                    else{
+                        if((stock_s.containsKey(a->stock))){// check if it is present in SELL mode
+                            Heap* s_heap = stock_s.getValue(a->stock);
+                            s_heap->insert(a);
+                        }
+                        else{
+                            Heap emptyheap;
+                            Heap* s_heap = &emptyheap;
+                            s_heap->insert(a);
+                            stock_b.insert(a->stock, s_heap);
+                        }
+                    }
+
+                }
+                else{
+                    if((stock_s.containsKey(a->stock))){// check if it is present in SELL mode
+                        Heap* s_heap = stock_s.getValue(a->stock);
+                        s_heap->insert(a);
+                    }
+                    else{
+                        Heap emptyheap;
+                        Heap* s_heap = &emptyheap;
+                        s_heap->insert(a);
+                        stock_b.insert(a->stock, s_heap);
+                    }
+                }
+            }
+
+            else if (a->mode=='b'){
                 if(stock_s.containsKey(a->stock)){ // check if it is present in SELL mode
                     Heap* s_heap = stock_s.getValue(a->stock);
                     Node* top_node = s_heap->getTop();
@@ -42,7 +158,7 @@ void market::start()
                         top_node = s_heap->getTop();
                     }
 
-                    if(top_node != nullptr && (-1)*top_node->price >= a->price && top_node->quantity < a->quantity){
+                    if(top_node != nullptr && (-1)*a->price >= top_node->price && top_node->quantity < a->quantity){
                         while(top_node->quantity < a->quantity){
                             a->quantity -= top_node->quantity;
 
@@ -50,7 +166,7 @@ void market::start()
                             ouT = a->broker + " purchased " + std::to_string(top_node->quantity) + " share of " + a->stock + " from " + top_node->broker + " for $" + std::to_string(top_node->price) + "/share" ;
 
                             // EOD processing
-                            // for a which is buy 
+                            // for a which is BUY 
                             if(EOD.containsKey(a->broker)){
                                 //std::vector<int>& temp1 = EOD.getValue(a->broker);
                                 EOD.getValue(a->broker)[0] += (-1)*top_node->price;
@@ -65,8 +181,8 @@ void market::start()
                             // for top_node which is SELL
                             if(EOD.containsKey(top_node->broker)){
                                 //std::vector<int>& temp1 = EOD.getValue(top_node->broker);
-                                EOD.getValue(a->broker)[0] += top_node->price;
-                                EOD.getValue(a->broker)[2] += top_node->quantity;
+                                EOD.getValue(top_node->broker)[0] += top_node->price;
+                                EOD.getValue(top_node->broker)[2] += top_node->quantity;
                             }
                             else{
                                 std::vector<int> temp1(3,0);
@@ -82,7 +198,7 @@ void market::start()
                         } 
                     }
 
-                    if(top_node != nullptr && (-1)*top_node->price >= a->price && a->quantity > 0 && top_node->quantity >= a->quantity){
+                    if(top_node != nullptr && (-1)*a->price >= top_node->price && a->quantity > 0 && top_node->quantity >= a->quantity){
                             top_node->quantity -= a->quantity; 
                             
                             // output line processing WITHOUT NEWLINE
@@ -104,8 +220,8 @@ void market::start()
                             // for top_node which is SELL
                             if(EOD.containsKey(top_node->broker)){
                                 //std::vector<int>& temp1 = EOD.getValue(top_node->broker);
-                                EOD.getValue(a->broker)[0] += top_node->price;
-                                EOD.getValue(a->broker)[2] += a->quantity;
+                                EOD.getValue(top_node->broker)[0] += top_node->price;
+                                EOD.getValue(top_node->broker)[2] += a->quantity;
                             }
                             else{
                                 std::vector<int> temp1(3,0);
