@@ -1,0 +1,6 @@
+Steps to run Autograder
+1. Replace username1 and username2 with your team members cse usernames in the ProjectTeams.csv. Keep the second one blank if you're not in a team
+2. Put your phase 1 tar file within the submissions/ directory
+3. Put your final submission tar file within the final_submissions/ directory
+4. Run python3 grader.py --full_batch --p1 --p2 --p3 to grade all 3 phases. (p1,p2,p3 are optional command line arguments to grade the corresponding phase)
+5. There may be a system dependent issue in running phase 2 part 1 autograder. In which case, contact us or run it on a linux system.
