@@ -12,7 +12,6 @@ class Stock {
         std::string stock_name;
         TradeAction tradeAction;
         long long int price;
-        inline static int k = 0;
         /*
         Finds the next next tokens one by one. Reset the token if required
         */
@@ -23,6 +22,20 @@ class Stock {
             price(std::stol(_price))
             {
             }
+
+        friend std::ostream &operator<<(std::ostream& os, const Stock& stock) {
+            os << stock.stock_name << " ";
+            std::string temp[3] = {"Buy", "Sell", "UD"};
+            os << temp[(int)stock.tradeAction] << " ";
+            os << stock.price << " ";
+            return os;
+        }
+};
+
+class Tokeniser {
+    private:
+        inline static int k = 0;
+    public:
         static std::string tokeniser(std::string& txt, char l) {
             std::string temp;
             while (true){
@@ -39,17 +52,10 @@ class Stock {
             if(txt[k-1]=='\0'){return "";}
             return temp;
         }
-        static void tokeniserResetTo(int pos = 0) {
+        inline static void tokeniserResetTo(int pos = 0) {
             k = pos;
         }
-        static int tokeniserPosition() {
+        inline static int tokeniserPosition() {
             return k;
-        }
-        friend std::ostream &operator<<(std::ostream& os, const Stock& stock) {
-            os << stock.stock_name << " ";
-            std::string temp[3] = {"Buy", "Sell", "UD"};
-            os << temp[(int)stock.tradeAction] << " ";
-            os << stock.price << " ";
-            return os;
         }
 };
