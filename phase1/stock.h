@@ -8,21 +8,32 @@ enum class TradeAction {
 };
 
 class Stock {
-    private:
-        std::string stock_name;
-        TradeAction tradeAction;
-        long long int price;
-        /*
-        Finds the next next tokens one by one. Reset the token if required
-        */
     public:
+        using stock_name_type = std::string;
+        using price_type = long long int;
+        stock_name_type stock_name;
+        TradeAction tradeAction;
+        price_type price;
+
         Stock(std::string _stock_name, std::string _tradeAction, std::string _price) :
             stock_name(_stock_name),
             tradeAction((_tradeAction == "b" ? TradeAction::BUY : (_tradeAction == "s" ? TradeAction::SELL : TradeAction::UD))),
             price(std::stol(_price))
             {
             }
-
+        
+        Stock(const Stock& s) :
+            stock_name(s.stock_name),
+            tradeAction(s.tradeAction),
+            price(s.price)
+            {
+            }
+        bool operator<(const Stock& other) const {
+            return stock_name < other.stock_name;
+        }
+        bool operator==(const Stock& other) const {
+            return stock_name == other.stock_name;
+        }
         friend std::ostream &operator<<(std::ostream& os, const Stock& stock) {
             os << stock.stock_name << " ";
             std::string temp[3] = {"Buy", "Sell", "UD"};

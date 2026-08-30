@@ -1,4 +1,4 @@
-CHOD 650 s#
+ASML 650 s#
 ASML 645 b#
 AAPL 430 b#
 AAPL 435 b#
@@ -9,4 +9,4 @@ ASML 651 b#
 AAPL 432 s#
 ASML 654 s#
 ASML 652 s#
-BAHN 650 s#
+ASML 650 s#

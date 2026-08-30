@@ -7,7 +7,9 @@
 class Trader {
     private:
         std::string residue_message; // Unprocessed message remaining
-        void processStock(Stock& stock) {
+
+    protected:
+        virtual void processStock(Stock& stock) {
             std::cout << stock << "\n";
         }
     public:
@@ -37,19 +39,15 @@ class Trader {
                 processStock(currStock);
             }
         }
-};
 
-int main(int argc, char** argv) {
-    try {
-        Receiver receiver;
-        Trader trader;
-        while(true) {
-            std::string message = receiver.readClient();
-            if(message.size() == 0) continue;
-            trader.digestAndProcess(message);
+        /*
+        Give a proposed stock to propose it in the market
+        */
+        bool orderStock(Stock s) {
+            std::cout << s << "\n";
+            return true;
         }
-    } catch (const std::exception& e) {
-        std::cerr << e.what() << "\n";
-        return 1;
-    }
-}
+        void noTrade() {
+            std::cout << "No Trade" <<"\n";
+        }
+};
