@@ -1,3 +1,5 @@
+#pragma once
+
 #include <cstdint>
 namespace TraderProperties {
     constexpr uint16_t TRADER_PORT = 8080;
