@@ -7,7 +7,7 @@ class Tokeniser {
     private:
         inline static int k = 0;
     public:
-        static std::string tokeniser(std::string& txt, char l) {
+        static std::string tokeniser(const std::string& txt, char l) {
             std::string temp;
             while (true){
                 if (txt[k]=='\0') {

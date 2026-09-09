@@ -1,9 +1,16 @@
 #include "common/stock.h"
 
-Stock::Stock(std::string _stock_name, std::string _tradeAction, std::string _price) :
+Stock::Stock(stock_name_type _stock_name, TradeAction _tradeAction, price_type _price) :
     stock_name(_stock_name),
-    tradeAction((_tradeAction == "b" ? TradeAction::BUY : (_tradeAction == "s" ? TradeAction::SELL : TradeAction::UD))),
-    price(std::stol(_price))
+    tradeAction(_tradeAction),
+    price(_price)
+    {
+    }
+
+Stock::Stock() :
+    stock_name("UD"),
+    tradeAction(TradeAction::UD),
+    price(0)
     {
     }
 

@@ -14,21 +14,21 @@ int main(int argc, char ** argv){
         serverAddress.sin_port = htons(TraderProperties::TRADER_PORT);
         serverAddress.sin_addr.s_addr = INADDR_ANY;
 
-        TraderConnector traderconnect(serverAddress);
+        Iml iml(serverAddress);
 
         std::ifstream datafile(filepath);
         std::string message;
 
         while(std::getline(datafile, message)) {
             // send message to Trader's reciever
-            int bytessent = traderconnect.sendMessageToTrader(message);
+            int bytessent = iml.sendMessageToTrader(message);
             if(bytessent == -1) {
                 throw std::runtime_error("Error while sending message from iml to trader");
             }
         }
         
         message = "$";
-        int bytessent = traderconnect.sendMessageToTrader(message);
+        int bytessent = iml.sendMessageToTrader(message);
         if(bytessent == -1) {
             throw std::runtime_error("Error while sending message from iml to trader");
         }

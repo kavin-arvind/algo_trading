@@ -31,6 +31,8 @@ add_library(algotrader_common
 
     # Add common .cpp files here as you create them
     src/common/stock.cpp
+    src/common/stockFactory.cpp
+    src/common/tradeAction.cpp
 
 )
 

@@ -11,8 +11,16 @@ class Stock {
         TradeAction tradeAction;
         price_type price;
 
-        Stock(std::string _stock_name, std::string _tradeAction, std::string _price);
-        
+        Stock(
+            stock_name_type _stock_name,
+            TradeAction _tradeAction,
+            price_type _price
+        );
+        Stock();
+
+        /*
+        Copy Constructor
+        */
         Stock(const Stock& s);
         bool operator<(const Stock& other) const;
         bool operator==(const Stock& other) const;

@@ -8,16 +8,12 @@
 #include "trader/receiver.h"
 
 class Trader {
-    private:
-        std::string residue_message;
-    protected:
-        virtual void processStock(Stock&);
     public:
         Trader();
-        void digestAndProcess(std::string&);
         /*
         Give a proposed stock to propose it in the market
         */
+        virtual void processStock(Stock&);
         bool orderStock(Stock s);
         void noTrade();
 };

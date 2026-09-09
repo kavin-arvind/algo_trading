@@ -6,6 +6,6 @@ class TraderPhase1 : public Trader {
     private:
         std::map<Stock::stock_name_type, Stock::price_type> seenStocks;
         std::set<Stock> boughtStocks;
-    protected:
+    public:
         void processStock(Stock& s) override;
 };

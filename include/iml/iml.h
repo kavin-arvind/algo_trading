@@ -7,11 +7,11 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 
-class TraderConnector {
+class Iml {
     private:
         int clientsocketfd;
     public:
-        TraderConnector(sockaddr_in traderaddr);
+        Iml(sockaddr_in traderaddr);
         int sendMessageToTrader(std::string &message);
-        ~TraderConnector();
+        ~Iml();
 };
