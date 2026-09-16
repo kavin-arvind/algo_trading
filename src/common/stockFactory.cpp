@@ -1,6 +1,6 @@
 #include "common/stockFactory.h"
 
-void StockFactory::digestAndCallTrader(std::string& message, Trader* trader) {
+void StockFactory::digestAndCallTrader(std::string& message, Trader& trader) {
     residue_message += message;
     Tokeniser::tokeniserResetTo(0);
     while(true) {
@@ -17,7 +17,7 @@ void StockFactory::digestAndCallTrader(std::string& message, Trader* trader) {
         // We've received a full line and we can process it into a full stock.
         Stock currStock = StockFactory::simpleConstruction(residue_message, Tokeniser::tokeniserPosition());
         Tokeniser::tokeniserResetTo(found_pos+1);
-        trader->processStock(currStock);
+        trader.processStock(currStock);
     }
 }
 

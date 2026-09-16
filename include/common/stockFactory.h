@@ -14,7 +14,7 @@ class StockFactory {
             mode(_mode)
         {}
 
-        void digestAndCallTrader(std::string&, Trader*);
+        void digestAndCallTrader(std::string&, Trader&);
         Stock stockConstructor(const std::string& message, size_t pos);
         /*
         Constructs a Stock of template - ASML 650 s#
